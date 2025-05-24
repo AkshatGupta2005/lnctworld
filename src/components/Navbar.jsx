@@ -74,8 +74,8 @@ const Navbar = () => {
   )
 
   return (
-    <nav className={`navbar ${scrolled ? "scrolled" : ""}`}>
-      <div className="navbar-container">
+    <nav className="navbar">
+      <div className={`navbar-container ${scrolled ? "scrolled" : ""}`}>
         {/* Logo */}
         <a href="#home" className="logo">
           <span><img src={logo} alt="Logo" className="logoImg"/></span>

@@ -305,77 +305,11 @@ const HeroSection = () => {
                 whileTap={{ scale: 0.95 }}
               >
                 <span>Explore Universe</span>
-                <div className="btn-stars">
-                  <span className="star">✦</span>
-                  <span className="star">✦</span>
-                  <span className="star">✦</span>
-                </div>
               </motion.a>
-
-              <motion.button
-                className="cosmic-play-btn"
-                whileHover={{ scale: 1.1, rotate: 180 }}
-                whileTap={{ scale: 0.9 }}
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M8 5v14l11-7z" fill="currentColor" />
-                </svg>
-                <div className="play-glow"></div>
-              </motion.button>
             </motion.div>
           </motion.div>
         </div>
-
-        {/* Floating cosmic elements */}
-        <motion.div
-          className="cosmic-element element-1"
-          animate={{
-            y: [0, -30, 0],
-            rotate: [0, 360],
-            scale: [1, 1.1, 1],
-          }}
-          transition={{
-            duration: 8,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-          }}
-        >
-          <div className="cosmic-icon">🌟</div>
-        </motion.div>
-
-        <motion.div
-          className="cosmic-element element-2"
-          animate={{
-            y: [0, -20, 0],
-            rotate: [0, -360],
-            scale: [1, 0.9, 1],
-          }}
-          transition={{
-            duration: 12,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-            delay: 2,
-          }}
-        >
-          <div className="cosmic-icon">🚀</div>
-        </motion.div>
-
-        <motion.div
-          className="cosmic-element element-3"
-          animate={{
-            y: [0, -25, 0],
-            rotate: [0, 180, 360],
-            scale: [1, 1.2, 1],
-          }}
-          transition={{
-            duration: 10,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-            delay: 4,
-          }}
-        >
-          <div className="cosmic-icon">🌌</div>
-        </motion.div>
+        
       </div>
 
       {/* Enhanced scroll indicator */}

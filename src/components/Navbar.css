@@ -49,6 +49,10 @@ body[data-theme="dark"] {
   align-items: center;
 }
 
+.navbar-container.scrolled {
+  background-color: transparent;
+}
+
 .navbar-container {
   width: 80%;
   margin: 0 auto;
@@ -232,7 +236,6 @@ body[data-theme="dark"] {
   .nav-links {
     display: flex;
   }
-
   .nav-actions {
     display: flex;
   }
@@ -301,7 +304,9 @@ body[data-theme="dark"] {
   .hero-title {
     font-size: 2rem;
   }
-
+  .navbar-container {
+    width: 90%;
+  }
   .hero-subtitle {
     font-size: 1rem;
   }
