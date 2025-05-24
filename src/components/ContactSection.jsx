@@ -205,18 +205,6 @@ const ContactSection = () => {
                   required
                 ></textarea>
               </div>
-
-              <div className="form-group checkbox">
-                <input
-                  type="checkbox"
-                  id="newsletter"
-                  name="newsletter"
-                  checked={formData.newsletter}
-                  onChange={handleChange}
-                />
-                <label htmlFor="newsletter">Subscribe to our newsletter</label>
-              </div>
-
               <button type="submit" className="btn">
                 Send Message
               </button>

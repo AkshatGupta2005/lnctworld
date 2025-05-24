@@ -91,7 +91,7 @@ body[data-theme="dark"] {
 }
 
 .nav-link {
-  color: var(--primary-color);
+  color: var(--text-color);
   text-decoration: none;
   font-weight: 500;
   padding: 0.5rem 0;

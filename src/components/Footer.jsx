@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom"
+import logo from "../assets/logo.png"
 import "./Footer.css"
 
 const Footer = () => {
@@ -9,7 +10,7 @@ const Footer = () => {
       <div className="container">
         <div className="footer-content">
           <div className="footer-logo">
-            <img src="/placeholder.svg?height=40&width=120" alt="LNCT Logo" />
+            <img src={logo} alt="LNCT Logo" />
             <p>Legacy of Excellence</p>
           </div>
 
@@ -76,17 +77,6 @@ const Footer = () => {
                 </li>
               </ul>
             </div>
-          </div>
-
-          <div className="footer-newsletter">
-            <h3>Subscribe to Newsletter</h3>
-            <p>Stay updated with our latest news and events</p>
-            <form className="newsletter-form">
-              <input type="email" placeholder="Your Email" required />
-              <button type="submit" className="btn">
-                Subscribe
-              </button>
-            </form>
           </div>
         </div>
 

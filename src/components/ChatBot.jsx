@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import "./ChatBot.css"
+import chatIcon from "../assets/chatLogo.svg"
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -223,22 +224,10 @@ const ChatBot = () => {
               <line x1="6" y1="6" x2="18" y2="18"></line>
             </svg>
           ) : (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-            </svg>
+            <img src={chatIcon} alt="Chat Bot Icon" />
           )}
         </div>
         <div className="toggle-ripple"></div>
-        {!isOpen && (
-          <motion.div
-            className="ai-indicator"
-            initial={{ scale: 0, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 1, type: "spring" }}
-          >
-            AI
-          </motion.div>
-        )}
       </motion.div>
 
       {/* Premium Chat Container */}

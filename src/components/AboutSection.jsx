@@ -3,6 +3,10 @@
 import { useRef } from "react"
 import { motion, useInView } from "framer-motion"
 import "./AboutSection.css"
+import director from "../assets/director_img.png"
+import secretary from "../assets/Secretary_img.png"
+import viceChair from "../assets/viceChair_img.png"
+import exe_director from "../assets/executiveDir_img.png"
 
 const timelineEvents = [
   { year: "1994", event: "Establishment of LNCT Bhopal" },
@@ -47,7 +51,7 @@ const AboutSection = () => {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.6 }}
         >
-          Chouksey Family & Legacy
+          Visionaries Behind LNCT
         </motion.h2>
 
         <div className="about-content">
@@ -80,10 +84,10 @@ const AboutSection = () => {
             transition={{ duration: 0.8, delay: 0.3 }}
           >
             <div className="image-grid">
-              <img src="/placeholder.svg?height=300&width=300" alt="Founder" />
-              <img src="/placeholder.svg?height=300&width=300" alt="Old Campus" />
-              <img src="/placeholder.svg?height=300&width=300" alt="New Campus" />
-              <img src="/placeholder.svg?height=300&width=300" alt="Graduation Ceremony" />
+              <img src={director} alt="Founder" />
+              <img src={exe_director} alt="Executive Director" />
+              <img src={secretary} alt="New Campus" />
+              <img src={viceChair} alt="Graduation Ceremony" />
             </div>
           </motion.div>
         </div>
