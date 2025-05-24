@@ -94,7 +94,6 @@ const CategoryCards = () => {
     <section className="categories-section" id="categories">
       <div className="categories-bg">
         <div className="bg-gradient"></div>
-        <div className="bg-pattern"></div>
       </div>
 
       <div className="container">

@@ -14,11 +14,17 @@
   box-sizing: border-box;
 }
 
+html {
+  overflow-x: hidden;
+}
+
 body {
   font-family: "Poppins", sans-serif;
   background-color: var(--background);
   color: var(--text-dark);
   overflow-x: hidden;
+  scroll-behavior: smooth;
+  width: 100%;
 }
 
 .app {
