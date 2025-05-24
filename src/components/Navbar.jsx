@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import "./Navbar.css"
+import logo from "../assets/logo.png"
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
@@ -77,7 +78,7 @@ const Navbar = () => {
       <div className="navbar-container">
         {/* Logo */}
         <a href="#home" className="logo">
-          <span>LNCT</span>
+          <span><img src={logo} alt="Logo" className="logoImg"/></span>
         </a>
 
         {/* Desktop Navigation */}
@@ -94,9 +95,6 @@ const Navbar = () => {
           <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
             {theme === "light" ? <MoonIcon /> : <SunIcon />}
           </button>
-          <a href="#login" className="login-btn">
-            Login
-          </a>
         </div>
 
         {/* Mobile Menu Button */}
@@ -114,9 +112,6 @@ const Navbar = () => {
             {link.title}
           </a>
         ))}
-        <a href="#login" className="mobile-login-btn" onClick={() => setIsOpen(false)}>
-          Login
-        </a>
       </div>
     </nav>
   )

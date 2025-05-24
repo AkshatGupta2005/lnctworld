@@ -42,23 +42,20 @@ body[data-theme="dark"] {
   top: 0;
   width: 100%;
   z-index: 1000;
-  background-color: transparent;
   transition: all 0.3s ease;
   padding: 1rem 0;
-}
-
-.navbar.scrolled {
-  background-color: var(--bg-color);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--border-color);
-  padding: 0.75rem 0;
-  box-shadow: 0 4px 20px var(--shadow-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .navbar-container {
-  max-width: 1200px;
+  width: 80%;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 15px;
+  background-color: whitesmoke;
+  backdrop-filter: blur(15px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -66,13 +63,17 @@ body[data-theme="dark"] {
 
 /* Logo */
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
+  width: auto;
+  height: 3em;
   color: var(--primary-color);
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
+.logoImg {
+  width: auto;
+  height: 100%;
+}
 .logo:hover {
   color: var(--secondary-color);
 }
@@ -245,7 +246,11 @@ body[data-theme="dark"] {
 .hero {
   padding-top: 6rem;
   padding-bottom: 4rem;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--primary-color) 0%,
+    var(--secondary-color) 100%
+  );
   color: white;
   text-align: center;
 }
