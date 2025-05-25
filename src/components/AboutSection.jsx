@@ -4,7 +4,7 @@ import { useRef } from "react"
 import { motion, useInView } from "framer-motion"
 import "./AboutSection.css"
 import director from "../assets/director_img.png"
-import secretary from "../assets/Secretary_img.png"
+import secretary from "../assets/Secretary_Img.png"
 import viceChair from "../assets/viceChair_img.png"
 import exe_director from "../assets/executiveDir_img.png"
 
