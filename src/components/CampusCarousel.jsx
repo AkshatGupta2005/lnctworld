@@ -58,7 +58,20 @@ const CampusCarousel = () => {
         >
           Events
         </motion.h2>
-
+        <p
+          style={{
+            fontSize: "1.125rem",
+            color: "var(--text-secondary)",
+            maxWidth: "600px",
+            margin: "0 auto",
+            fontWeight: 400,
+            textAlign: "center",
+            marginBottom: "2rem"
+          }}
+        >
+          Stay updated with our latest events, workshops, and networking opportunities designed to connect, inspire, and grow together
+        </p>
+        
         <motion.div
           initial={{ opacity: 0 }}
           animate={isInView ? { opacity: 1 } : { opacity: 0 }}

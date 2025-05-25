@@ -2,6 +2,7 @@
 
 import { useRef, useState, useEffect } from "react"
 import "./CategoryCards.css"
+import { motion, useInView } from "framer-motion"
 
 const servicesData = [
   {
@@ -199,11 +200,29 @@ const CategoryCards = () => {
     }
   }, [isScrolling])
 
+  const headerRef = useRef(null)
+  const isInView = useInView(headerRef, { once: true })
+
   return (
     <div className="category-cards-container">
       <div className="header">
-        <h1>Professional Services</h1>
-        <p>Comprehensive solutions designed to drive efficiency and growth across diverse industries</p>
+        <motion.h1
+          className="section-title"
+          style={{
+            fontSize: "2.5rem",
+            textAlign: "center",
+            marginBottom: "40px",
+            color: "var(--secondary)",
+            position: "relative",
+          }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6 }}
+          ref={headerRef}
+        >
+          What We Offer ?
+        </motion.h1>
+        <p>A perfect blend of innovation, quality, and value—crafted to meet your needs and exceed expectations.</p>
       </div>
 
       <div className="scroll-wrapper">
