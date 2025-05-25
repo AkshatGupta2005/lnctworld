@@ -29,35 +29,57 @@ const ContactSection = () => {
     }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-
-    // Mock API call
-    setTimeout(() => {
+  
+    try {
+      const res = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+        }),
+      })
+  
+      const data = await res.json()
+  
+      if (data.success) {
+        setFormStatus({
+          submitted: true,
+          success: true,
+          message: "Thank you for your message! We will get back to you soon.",
+        })
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+          newsletter: false,
+        })
+      } else {
+        setFormStatus({
+          submitted: true,
+          success: false,
+          message: data.message || "Something went wrong!",
+        })
+      }
+  
+      setTimeout(() => {
+        setFormStatus({ submitted: false, success: false, message: "" })
+      }, 5000)
+    } catch (error) {
+      console.error("Submit Error:", error)
       setFormStatus({
         submitted: true,
-        success: true,
-        message: "Thank you for your message! We will get back to you soon.",
+        success: false,
+        message: "Server error. Please try again later.",
       })
-
-      // Reset form
-      setFormData({
-        name: "",
-        email: "",
-        message: "",
-        newsletter: false,
-      })
-
-      // Reset status after 5 seconds
-      setTimeout(() => {
-        setFormStatus({
-          submitted: false,
-          success: false,
-          message: "",
-        })
-      }, 5000)
-    }, 1000)
+    }
   }
+  
 
   return (
     <section className="contact-section" id="contact" ref={ref}>

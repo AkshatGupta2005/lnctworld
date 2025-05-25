@@ -1,0 +1,59 @@
+import express from "express";
+import cors from "cors";
+import nodemailer from "nodemailer";
+import { Pool } from "pg";
+import dotenv from "dotenv";
+dotenv.config();
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// PostgreSQL pool
+// const pool = new Pool({
+//   user: process.env.PG_USER,
+//   host: process.env.PG_HOST,
+//   database: process.env.PG_DATABASE,
+//   password: process.env.PG_PASSWORD,
+//   port: process.env.PG_PORT,
+// })
+
+// Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail", // or "hotmail", or configure with your SMTP
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+app.post("/api/contact", async (req, res) => {
+  const { name, email, message } = req.body;
+  console.log(name, email.message);
+  try {
+    // Save to PostgreSQL
+    // await pool.query(
+    //   "INSERT INTO contact_queries (name, email, message) VALUES ($1, $2, $3)",
+    //   [name, email, message]
+    // )
+
+    // Send acknowledgment email
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "We Received Your Message",
+      text: `Hi ${name},\n\nThank you for contacting us. Our team will reach out to you shortly.\n\nBest regards,\nLNCT Team`,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ success: true, message: "Message sent and saved!" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
+
+app.listen(process.env.PORT, () => {
+  console.log(`Server running on port ${process.env.PORT}`);
+});
