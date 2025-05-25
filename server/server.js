@@ -42,7 +42,7 @@ app.post("/api/contact", async (req, res) => {
       from: process.env.EMAIL_USER,
       to: email,
       subject: "We Received Your Message",
-      text: `Hi ${name},\n\nThank you for contacting us. Our team will reach out to you shortly.\n\nBest regards,\nLNCT Team`,
+      text: `Hi ${name},\n\nThank you for contacting us. Our team will reach out to you shortly.\n\nBest regards,\nLNCT Group`,
     };
 
     await transporter.sendMail(mailOptions);

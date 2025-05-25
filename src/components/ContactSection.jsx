@@ -33,7 +33,7 @@ const ContactSection = () => {
     e.preventDefault()
   
     try {
-      const res = await fetch("http://localhost:5000/api/contact", {
+      const res = await fetch("https://lnctworld.onrender.com/api/contact", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
