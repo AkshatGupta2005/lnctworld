@@ -14,31 +14,31 @@ const campusImages = [
     id: 1,
     title: "Campus Activities",
     description: "Students participating in various extracurricular activities",
-    image: "/placeholder.svg?height=600&width=800",
+    image: "https://i.pinimg.com/236x/1d/f1/43/1df143603c7a9f51f3e8348f0ede6277.jpg",
   },
   {
     id: 2,
     title: "Industry Visits",
     description: "Students visiting leading industries for practical exposure",
-    image: "/placeholder.svg?height=600&width=800",
+    image: "https://i.pinimg.com/736x/44/e3/6d/44e36da9eb3789bb300bda0fd532b429.jpg",
   },
   {
     id: 3,
     title: "News Clips",
     description: "LNCT in the news for its achievements and contributions",
-    image: "/placeholder.svg?height=600&width=800",
+    image: "https://i.pinimg.com/736x/e0/0f/c7/e00fc7c3f8186cfc3f8804cfdad311ac.jpg",
   },
   {
     id: 4,
     title: "Event Images",
     description: "Glimpses of various events organized at LNCT campuses",
-    image: "/placeholder.svg?height=600&width=800",
+    image: "https://i.pinimg.com/736x/35/c3/e2/35c3e220bb6057cbccda2c532004172b.jpg",
   },
   {
     id: 5,
     title: "Graduation Day",
     description: "Celebrating the success of our graduates",
-    image: "/placeholder.svg?height=600&width=800",
+    image: "https://i.pinimg.com/736x/1b/52/88/1b5288594fbebfc4a13ba024516a9b18.jpg",
   },
 ]
 
@@ -56,7 +56,7 @@ const CampusCarousel = () => {
           transition={{ duration: 0.6 }}
           ref={ref}
         >
-          Campus Life
+          Events
         </motion.h2>
 
         <motion.div
