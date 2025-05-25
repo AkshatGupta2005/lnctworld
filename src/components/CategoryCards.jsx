@@ -1,188 +1,243 @@
 "use client"
 
-import { useRef } from "react"
-import { Link } from "react-router-dom"
-import { motion, useInView } from "framer-motion"
+import { useRef, useState, useEffect } from "react"
 import "./CategoryCards.css"
 
-const categories = [
+const servicesData = [
   {
     id: 1,
     title: "Colleges & Universities",
     description:
-      "Explore our prestigious colleges and universities offering a wide range of courses with world-class facilities.",
-    icon: "🎓",
-    path: "/colleges",
-    gradient: "linear-gradient(135deg, #FF7F3E 0%, #FFB366 100%)",
-    count: "15+ Institutions",
+      "Advanced management systems for higher education institutions with comprehensive academic and administrative solutions.",
+    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop&crop=center",
+    alt: "University Campus",
+    features: ["Student Information Systems", "Academic Management", "Campus Administration"],
   },
   {
     id: 2,
     title: "Schools",
     description:
-      "Discover our schools providing quality education from kindergarten to high school with modern teaching methods.",
-    icon: "🏫",
-    path: "/schools",
-    gradient: "linear-gradient(135deg, #604CC3 0%, #8B7ED8 100%)",
-    count: "25+ Schools",
+      "Comprehensive educational platforms designed specifically for K-12 institutions and primary education management.",
+    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=300&fit=crop&crop=center",
+    alt: "School Classroom",
+    features: ["Classroom Management", "Parent Communication", "Student Progress Tracking"],
   },
   {
     id: 3,
-    title: "Medical, Ayurveda & Homeopathy",
+    title: "Medical & Healthcare",
     description:
-      "Learn about our institutions offering medical, ayurvedic, and homeopathic education with advanced research facilities.",
-    icon: "⚕️",
-    path: "/medical",
-    gradient: "linear-gradient(135deg, #80C4E9 0%, #A8D8EA 100%)",
-    count: "8+ Medical Colleges",
+      "Integrated healthcare solutions for medical practices, including traditional, Ayurveda, and Homeopathy treatments.",
+    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop&crop=center",
+    alt: "Medical Healthcare",
+    features: ["Patient Management", "Electronic Health Records", "Appointment Scheduling"],
   },
   {
     id: 4,
     title: "Industries & Companies",
-    description: "Explore our industrial ventures and companies across various sectors driving innovation and growth.",
-    icon: "🏭",
-    path: "/industries",
-    gradient: "linear-gradient(135deg, #FF7F3E 0%, #E06A2B 100%)",
-    count: "50+ Companies",
+    description:
+      "Enterprise solutions for manufacturing and corporate environments with focus on efficiency and productivity.",
+    image: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=400&h=300&fit=crop&crop=center",
+    alt: "Industrial Manufacturing",
+    features: ["Resource Planning", "Supply Chain Management", "Quality Control"],
   },
   {
     id: 5,
-    title: "Digital & Academic Portals",
-    description: "Access our cutting-edge digital platforms and academic portals for enhanced learning and research.",
-    icon: "💻",
-    path: "/digital",
-    gradient: "linear-gradient(135deg, #604CC3 0%, #4A3B9A 100%)",
-    count: "10+ Platforms",
+    title: "Digital Platforms",
+    description:
+      "Modern web solutions and digital transformation services for academic portals and online learning environments.",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop&crop=center",
+    alt: "Digital Technology",
+    features: ["Web Development", "Mobile Applications", "Cloud Solutions"],
   },
 ]
 
 const CategoryCards = () => {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, amount: 0.1 })
+  const scrollContainerRef = useRef(null)
+  const [canScrollLeft, setCanScrollLeft] = useState(false)
+  const [canScrollRight, setCanScrollRight] = useState(true)
+  const [isScrolling, setIsScrolling] = useState(false)
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.15,
-        delayChildren: 0.2,
-      },
-    },
+  const updateNavButtons = () => {
+    if (scrollContainerRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
+      const maxScroll = scrollWidth - clientWidth
+      setCanScrollLeft(scrollLeft > 0)
+      setCanScrollRight(scrollLeft < maxScroll - 1)
+    }
   }
 
-  const cardVariants = {
-    hidden: {
-      y: 80,
-      opacity: 0,
-      rotateX: 45,
-      scale: 0.8,
-    },
-    visible: {
-      y: 0,
-      opacity: 1,
-      rotateX: 0,
-      scale: 1,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      },
-    },
+  const smoothScrollTo = (element, target, duration = 400) => {
+    const start = element.scrollLeft
+    const change = target - start
+    const startTime = performance.now()
+
+    const animateScroll = (currentTime) => {
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+
+      // Easing function (ease-out-quart)
+      const easeOut = 1 - Math.pow(1 - progress, 4)
+
+      element.scrollLeft = start + change * easeOut
+
+      if (progress < 1) {
+        requestAnimationFrame(animateScroll)
+      } else {
+        setIsScrolling(false)
+        updateNavButtons()
+      }
+    }
+
+    setIsScrolling(true)
+    requestAnimationFrame(animateScroll)
   }
+
+  const scrollCards = (direction) => {
+    if (isScrolling || !scrollContainerRef.current) return
+
+    const cardWidth = 280 + 24 // card width + gap
+    const currentScroll = scrollContainerRef.current.scrollLeft
+
+    let targetScroll
+    if (direction === "next") {
+      targetScroll = currentScroll + cardWidth
+    } else {
+      targetScroll = currentScroll - cardWidth
+    }
+
+    // Ensure we don't scroll beyond bounds
+    const maxScroll = scrollContainerRef.current.scrollWidth - scrollContainerRef.current.clientWidth
+    targetScroll = Math.max(0, Math.min(targetScroll, maxScroll))
+
+    smoothScrollTo(scrollContainerRef.current, targetScroll)
+  }
+
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    if (!scrollContainer) return
+
+    const handleScroll = () => {
+      if (!isScrolling) {
+        updateNavButtons()
+      }
+    }
+
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault()
+        scrollCards("prev")
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault()
+        scrollCards("next")
+      }
+    }
+
+    const handleResize = () => {
+      updateNavButtons()
+    }
+
+    // Touch/swipe support
+    let startX = 0
+    let startY = 0
+    let isTouch = false
+
+    const handleTouchStart = (e) => {
+      startX = e.touches[0].clientX
+      startY = e.touches[0].clientY
+      isTouch = true
+    }
+
+    const handleTouchMove = (e) => {
+      if (!isTouch) return
+
+      const currentX = e.touches[0].clientX
+      const currentY = e.touches[0].clientY
+      const diffX = startX - currentX
+      const diffY = startY - currentY
+
+      // Prevent vertical scrolling when swiping horizontally
+      if (Math.abs(diffX) > Math.abs(diffY)) {
+        e.preventDefault()
+      }
+    }
+
+    const handleTouchEnd = (e) => {
+      if (!isTouch) return
+
+      const endX = e.changedTouches[0].clientX
+      const diffX = startX - endX
+
+      if (Math.abs(diffX) > 50) {
+        // Minimum swipe distance
+        if (diffX > 0) {
+          scrollCards("next")
+        } else {
+          scrollCards("prev")
+        }
+      }
+
+      isTouch = false
+    }
+
+    scrollContainer.addEventListener("scroll", handleScroll)
+    document.addEventListener("keydown", handleKeyDown)
+    window.addEventListener("resize", handleResize)
+    scrollContainer.addEventListener("touchstart", handleTouchStart, { passive: true })
+    scrollContainer.addEventListener("touchmove", handleTouchMove, { passive: false })
+    scrollContainer.addEventListener("touchend", handleTouchEnd, { passive: true })
+
+    // Initialize navigation buttons
+    updateNavButtons()
+
+    return () => {
+      scrollContainer.removeEventListener("scroll", handleScroll)
+      document.removeEventListener("keydown", handleKeyDown)
+      window.removeEventListener("resize", handleResize)
+      scrollContainer.removeEventListener("touchstart", handleTouchStart)
+      scrollContainer.removeEventListener("touchmove", handleTouchMove)
+      scrollContainer.removeEventListener("touchend", handleTouchEnd)
+    }
+  }, [isScrolling])
 
   return (
-    <section className="categories-section" id="categories">
-      <div className="categories-bg">
-        <div className="bg-gradient"></div>
+    <div className="category-cards-container">
+      <div className="header">
+        <h1>Professional Services</h1>
+        <p>Comprehensive solutions designed to drive efficiency and growth across diverse industries</p>
       </div>
 
-      <div className="container">
-        <motion.div
-          className="section-header"
-          initial={{ opacity: 0, y: 50 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-          transition={{ duration: 0.8 }}
-        >
-          <h2 className="section-title">
-            <span className="title-main">Explore Our</span>
-            <span className="title-highlight">Educational Universe</span>
-          </h2>
-          <p className="section-subtitle">
-            Discover a world of opportunities across our diverse educational institutions and innovative platforms
-          </p>
-        </motion.div>
+      <div className="scroll-wrapper">
+        <button
+          className={`nav-button prev ${!canScrollLeft ? "disabled" : ""}`}
+          onClick={() => scrollCards("prev")}
+          disabled={!canScrollLeft}
+          aria-label="Previous"
+        />
+        <button
+          className={`nav-button next ${!canScrollRight ? "disabled" : ""}`}
+          onClick={() => scrollCards("next")}
+          disabled={!canScrollRight}
+          aria-label="Next"
+        />
 
-        <motion.div
-          ref={ref}
-          className="categories-grid"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
-          {categories.map((category, index) => (
-            <motion.div
-              key={category.id}
-              className="category-card"
-              variants={cardVariants}
-              whileHover={{
-                y: -15,
-                scale: 1.02,
-                rotateY: 5,
-                transition: { duration: 0.3 },
-              }}
-              style={{
-                "--card-gradient": category.gradient,
-              }}
-            >
-              <div className="card-glow"></div>
+        <div className="scroll-container" ref={scrollContainerRef}>
+          {servicesData.map((service, index) => (
+            <div key={service.id} className={`card card-${index + 1}`} tabIndex="0">
+              <img src={service.image || "/placeholder.svg"} alt={service.alt} className="card-image" />
               <div className="card-content">
-                <div className="card-header">
-                  <motion.div
-                    className="category-icon"
-                    whileHover={{
-                      scale: 1.2,
-                      rotate: 10,
-                      transition: { duration: 0.3 },
-                    }}
-                  >
-                    {category.icon}
-                  </motion.div>
-                  <div className="card-count">{category.count}</div>
-                </div>
-
-                <div className="card-body">
-                  <h3>{category.title}</h3>
-                  <p>{category.description}</p>
-                </div>
-
-                <div className="card-footer">
-                  <Link to={category.path} className="category-link">
-                    <span>Explore More</span>
-                    <motion.svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      whileHover={{ x: 5 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <line x1="5" y1="12" x2="19" y2="12"></line>
-                      <polyline points="12 5 19 12 12 19"></polyline>
-                    </motion.svg>
-                  </Link>
-                </div>
+                <h3>{service.title}</h3>
+                <p>{service.description}</p>
+                <ul className="card-features">
+                  {service.features.map((feature, idx) => (
+                    <li key={idx}>{feature}</li>
+                  ))}
+                </ul>
               </div>
-
-              <div className="card-overlay"></div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
-    </section>
+    </div>
   )
 }
 
