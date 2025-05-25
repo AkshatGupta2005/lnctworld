@@ -9,7 +9,7 @@ const servicesData = [
     title: "Colleges & Universities",
     description:
       "Advanced management systems for higher education institutions with comprehensive academic and administrative solutions.",
-    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=300&fit=crop&crop=center",
+    image: "https://lnctu.ac.in/wp-content/uploads/2024/09/LNCT-A-scaled-1-1024x528.jpg?w=400&h=300&fit=crop&crop=center",
     alt: "University Campus",
     features: ["Student Information Systems", "Academic Management", "Campus Administration"],
   },
@@ -18,7 +18,7 @@ const servicesData = [
     title: "Schools",
     description:
       "Comprehensive educational platforms designed specifically for K-12 institutions and primary education management.",
-    image: "https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=300&fit=crop&crop=center",
+    image: "https://www.lnctworldschools.com/wp-content/plugins/phastpress/phast.php/c2VydmljZT1pbWFnZXMmc3JjPWh0dHBzJTNBJTJGJTJGd3d3LmxuY3R3b3JsZHNjaG9vbHMuY29tJTJGd3AtY29udGVudCUyRnVwbG9hZHMlMkYyMDI1JTJGMDQlMkZzbGlkZXItMDQtbWluLTIuanBnJmNhY2hlTWFya2VyPTE3NDQwOTY0NDQtMjkyOTczJnRva2VuPTdkYjk1Y2JiM2QyODNjMTI.q.jpg?w=400&h=300&fit=crop&crop=center",
     alt: "School Classroom",
     features: ["Classroom Management", "Parent Communication", "Student Progress Tracking"],
   },
@@ -27,7 +27,7 @@ const servicesData = [
     title: "Medical & Healthcare",
     description:
       "Integrated healthcare solutions for medical practices, including traditional, Ayurveda, and Homeopathy treatments.",
-    image: "https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=300&fit=crop&crop=center",
+    image: "https://ucsworld.com/wp-content/uploads/2018/04/ln-medical-college-research-centre_bhopal.jpg?w=400&h=300&fit=crop&crop=center",
     alt: "Medical Healthcare",
     features: ["Patient Management", "Electronic Health Records", "Appointment Scheduling"],
   },
@@ -36,7 +36,7 @@ const servicesData = [
     title: "Industries & Companies",
     description:
       "Enterprise solutions for manufacturing and corporate environments with focus on efficiency and productivity.",
-    image: "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=400&h=300&fit=crop&crop=center",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTlEYTbZC7nU4rFkRkEeZLqOzMUZX3QpKJXng&s?w=400&h=300&fit=crop&crop=center",
     alt: "Industrial Manufacturing",
     features: ["Resource Planning", "Supply Chain Management", "Quality Control"],
   },
@@ -45,7 +45,7 @@ const servicesData = [
     title: "Digital Platforms",
     description:
       "Modern web solutions and digital transformation services for academic portals and online learning environments.",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=300&fit=crop&crop=center",
+    image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQKUCB9d3G08fXBW4K8lrzCaZsAQqtqd39Vyny4D5KeHre45DJDu_ekPQ29buOYLAypV_Y&usqp=CAU?w=400&h=300&fit=crop&crop=center",
     alt: "Digital Technology",
     features: ["Web Development", "Mobile Applications", "Cloud Solutions"],
   },
