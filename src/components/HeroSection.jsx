@@ -44,10 +44,10 @@ return (
               transition={{ duration: 1.2, delay: 1.5, ease: "easeOut" }}
             >
               <h1 className="lnct-text">
-                <span className="letter">D</span>
-                <span className="letter">O</span>
-                <span className="letter">S</span>
-                <span className="letter">A</span>
+                <span className="letter">L</span>
+                <span className="letter">N</span>
+                <span className="letter">C</span>
+                <span className="letter">T</span>
               </h1>
               <div className="cosmic-glow"></div>
             </motion.div>
@@ -58,8 +58,8 @@ return (
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, delay: 2.5 }}
             >
-              <span className="tagline-main">Idli</span>
-              <span className="tagline-sub">Sambhar</span>
+              <span className="tagline-main">Legacy of Excellence</span>
+              <span className="tagline-sub">Across the Educational Universe</span>
             </motion.p>
 
             <motion.div
@@ -74,7 +74,7 @@ return (
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span>Chatni Chatni</span>
+                <span><a href="/home">Explore Universe</a></span>
               </motion.a>
             </motion.div>
           </motion.div>
