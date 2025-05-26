@@ -1,14 +1,14 @@
 .hero-section {
-  height: 100vh;
-  width: 100%;
-  position: relative;
-  overflow: hidden;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  height: 100vh;
+  text-align: center;
   background: radial-gradient(ellipse at center, #0a0a2e 0%, #000000 70%);
+  position: relative;
+  z-index: 1;
 }
-
 .cosmic-bg {
   position: absolute;
   top: 0;
@@ -75,10 +75,12 @@
 }
 
 .earth-container {
+  width: 100vw;
+  height: 100vh;
   position: absolute;
-  width: 100%;
-  height: 100%;
-  z-index: 1;
+  top: 0;
+  left: 0;
+  z-index: 0;
 }
 
 .hero-text-container {
@@ -103,6 +105,11 @@
   margin: 0;
   position: relative;
   z-index: 3;
+}
+.earth-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
 }
 
 .letter {

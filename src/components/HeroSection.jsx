@@ -3,14 +3,70 @@
 import { useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import * as THREE from "three"
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
 import "./HeroSection.css"
 
 const HeroSection = () => {
   const mountRef = useRef(null)
-  const earthRef = useRef(null)
 
+  useEffect(() => {
+    const currentMount = mountRef.current
 
-return (
+    // Basic Three.js setup
+    const scene = new THREE.Scene()
+    const camera = new THREE.PerspectiveCamera(
+      75,
+      currentMount.clientWidth / currentMount.clientHeight,
+      0.1,
+      1000
+    )
+    camera.position.z = 3
+
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true })
+    renderer.setSize(currentMount.clientWidth, currentMount.clientHeight)
+    currentMount.appendChild(renderer.domElement)
+
+    // Load globe texture
+    const textureLoader = new THREE.TextureLoader()
+    const earthTexture = textureLoader.load(
+      "/textures/Untitled (4).png"
+    )
+
+    const geometry = new THREE.SphereGeometry(1.2, 64, 64)
+    const material = new THREE.MeshStandardMaterial({ map: earthTexture })
+    const globe = new THREE.Mesh(geometry, material)
+    scene.add(globe)
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+    scene.add(ambientLight)
+
+    // Controls (auto-rotate only)
+    const controls = new OrbitControls(camera, renderer.domElement)
+    controls.enableZoom = false
+    controls.enablePan = false
+    controls.autoRotate = true
+    controls.autoRotateSpeed = 0.3
+
+    // Animation loop
+    const animate = () => {
+      requestAnimationFrame(animate)
+      controls.update()
+      renderer.render(scene, camera)
+    }
+    animate()
+
+    // Cleanup
+    return () => {
+      if (currentMount && renderer.domElement) {
+        currentMount.removeChild(renderer.domElement)
+      }
+      geometry.dispose()
+      material.dispose()
+    }
+  }, [])
+
+  return (
     <div className="hero-section">
       {/* Animated particles */}
       <div className="cosmic-particles">
@@ -69,17 +125,16 @@ return (
               transition={{ duration: 1, delay: 3.2 }}
             >
               <motion.a
-                href="#universe"
+                href="/home"
                 className="explore-universe-btn"
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <span><a href="/home">Explore Universe</a></span>
+                Explore Universe
               </motion.a>
             </motion.div>
           </motion.div>
         </div>
-        
       </div>
 
       {/* Enhanced scroll indicator */}
@@ -92,13 +147,13 @@ return (
         <motion.div
           className="scroll-cosmic-arrow"
           animate={{ y: [0, 15, 0] }}
-          transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
+          transition={{ duration: 2, repeat: Infinity }}
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </motion.div>
-        <span>Journey into the Universe</span>  
+        <span>Journey into the Universe</span>
       </motion.div>
     </div>
   )
