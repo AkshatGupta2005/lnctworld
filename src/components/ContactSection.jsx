@@ -84,14 +84,10 @@ const ContactSection = () => {
   return (
     <section className="contact-section" id="contact" ref={ref}>
       <div className="container">
-        <motion.h2
-          className="section-title"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
-        >
+        <h2
+          className="section-title">
           Contact Us
-        </motion.h2>
+        </h2>
 
         <div className="contact-container">
           <motion.div

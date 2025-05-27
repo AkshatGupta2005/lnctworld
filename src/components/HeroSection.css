@@ -18,18 +18,6 @@
   pointer-events: none;
 }
 
-@keyframes nebulaPulse {
-  0%,
-  100% {
-    transform: scale(1) rotate(0deg);
-    opacity: 0.3;
-  }
-  50% {
-    transform: scale(1.2) rotate(180deg);
-    opacity: 0.5;
-  }
-}
-
 .cosmic-particles {
   position: absolute;
   top: 0;
