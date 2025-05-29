@@ -9,14 +9,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// PostgreSQL pool
-// const pool = new Pool({
-//   user: process.env.PG_USER,
-//   host: process.env.PG_HOST,
-//   database: process.env.PG_DATABASE,
-//   password: process.env.PG_PASSWORD,
-//   port: process.env.PG_PORT,
-// })
+const pool = new Pool({
+  user: process.env.PG_USER,
+  host: process.env.PG_HOST,
+  database: process.env.PG_DATABASE,
+  password: process.env.PG_PASSWORD,
+  port: process.env.PG_PORT,
+});
 
 // Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -32,10 +31,10 @@ app.post("/api/contact", async (req, res) => {
   console.log(name, email.message);
   try {
     // Save to PostgreSQL
-    // await pool.query(
-    //   "INSERT INTO contact_queries (name, email, message) VALUES ($1, $2, $3)",
-    //   [name, email, message]
-    // )
+    await pool.query(
+      "INSERT INTO contact_queries (name, email, message) VALUES ($1, $2, $3)",
+      [name, email, message]
+    );
 
     // Send acknowledgment email
     const mailOptions = {
