@@ -4,6 +4,7 @@ import nodemailer from "nodemailer";
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import fs from "fs";
+import { LargeObjectManager } from "pg-large-object";
 dotenv.config();
 
 const app = express();
@@ -69,7 +70,40 @@ app.get("/api/events", async (req, res) => {
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
+app.get("/api/image/:oid", async (req, res) => {
+  const client = await pool.connect();
+  const oid = parseInt(req.params.oid, 10);
 
+  if (isNaN(oid)) {
+    return res.status(400).send("Invalid OID");
+  }
+
+  try {
+    await client.query("BEGIN");
+    const lom = new LargeObjectManager({ pg: client });
+    const [stream, size] = await lom.openAndReadableStreamAsync(oid);
+
+    res.setHeader("Content-Type", "image/jpeg"); // adjust if storing PNG etc.
+    stream.pipe(res);
+
+    stream.on("end", async () => {
+      await client.query("COMMIT");
+      client.release();
+    });
+
+    stream.on("error", async (err) => {
+      console.error(err);
+      await client.query("ROLLBACK");
+      client.release();
+      res.status(500).send("Error streaming image");
+    });
+  } catch (err) {
+    console.error(err);
+    await client.query("ROLLBACK");
+    client.release();
+    res.status(500).send("Failed to fetch image");
+  }
+});
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
