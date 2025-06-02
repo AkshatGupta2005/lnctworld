@@ -17,7 +17,7 @@ const CampusCarousel = () => {
   useEffect(() => {
     const fetchEvents = async () => {
       try {
-        const res = await fetch("/api/events")
+        const res = await fetch("https://lnctworld.onrender.com/api/events")
         const data = await res.json()
         if (data.success) {
           setEvents(data.data)
@@ -54,7 +54,7 @@ const CampusCarousel = () => {
                 <div className="campus-slide">
                   <div className="campus-image">
                     <img
-                      src={`/api/image/${event.image}`}
+                      src={`https://lnctworld.onrender.com/api/image/${event.image}`}
                       alt={event.title}
                       onError={(e) => e.currentTarget.src = "/placeholder.svg"}
                     />
