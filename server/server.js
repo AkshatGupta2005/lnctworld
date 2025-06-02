@@ -71,54 +71,37 @@ app.get("/api/events", async (req, res) => {
   }
 });
 app.get("/api/image/:oid", async (req, res) => {
-  const client = await pool.connect();
   const oid = parseInt(req.params.oid, 10);
-
   if (isNaN(oid)) {
-    client.release();
     return res.status(400).send("Invalid OID");
   }
 
+  const client = await pool.connect();
+
   try {
     await client.query("BEGIN");
+
     const lom = new LargeObjectManager({ pg: client });
+    const [size, stream] = await lom.openAndReadableStreamAsync(oid, 16384); // buffer size: 16KB
 
-    lom.openAndReadableStream(oid, async (err, largeObject, length) => {
-      if (err) {
-        await client.query("ROLLBACK");
-        client.release();
-        return res.status(500).send("Failed to open large object");
-      }
+    res.setHeader("Content-Type", "image/jpeg");
+    res.setHeader("Content-Length", size);
 
-      res.setHeader("Content-Type", "image/jpeg");
-      res.setHeader("Content-Length", length);
-
-      const bufferSize = 16384; // 16 KB
-
-      const readAndSend = async () => {
-        try {
-          const buffer = await largeObject.readAsync(bufferSize);
-          if (buffer.length === 0) {
-            await largeObject.closeAsync();
-            await client.query("COMMIT");
-            client.release();
-            res.end(); // finished
-            return;
-          }
-          res.write(buffer);
-          readAndSend(); // continue reading
-        } catch (err) {
-          console.error("Error reading large object:", err);
-          await client.query("ROLLBACK");
-          client.release();
-          res.status(500).send("Error reading image");
-        }
-      };
-
-      readAndSend();
+    stream.on("error", async (err) => {
+      console.error("Stream error:", err);
+      await client.query("ROLLBACK");
+      client.release();
+      res.status(500).send("Error reading image stream");
     });
-  } catch (e) {
-    console.error("Unexpected error:", e);
+
+    stream.pipe(res);
+
+    stream.on("end", async () => {
+      await client.query("COMMIT");
+      client.release();
+    });
+  } catch (err) {
+    console.error("Unexpected error:", err);
     await client.query("ROLLBACK");
     client.release();
     res.status(500).send("Unexpected server error");
