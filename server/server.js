@@ -81,39 +81,49 @@ app.get("/api/image/:oid", async (req, res) => {
 
   try {
     await client.query("BEGIN");
-    const lom = new LargeObjectManager(client);
+    const lom = new LargeObjectManager({ pg: client });
 
-    lom.openAndReadableStream(oid, async (err, stream, length) => {
+    lom.openAndReadableStream(oid, async (err, largeObject, length) => {
       if (err) {
         await client.query("ROLLBACK");
         client.release();
-        console.error("Stream error:", err);
-        return res.status(500).send("Failed to open image stream");
+        return res.status(500).send("Failed to open large object");
       }
 
-      res.setHeader("Content-Type", "image/jpeg"); // or detect dynamically
-      stream.pipe(res);
+      res.setHeader("Content-Type", "image/jpeg");
+      res.setHeader("Content-Length", length);
 
-      stream.on("end", async () => {
-        await client.query("COMMIT");
-        client.release();
-      });
+      const bufferSize = 16384; // 16 KB
 
-      stream.on("error", async (streamErr) => {
-        console.error("Stream error:", streamErr);
-        await client.query("ROLLBACK");
-        client.release();
-        res.status(500).send("Streaming error");
-      });
+      const readAndSend = async () => {
+        try {
+          const buffer = await largeObject.readAsync(bufferSize);
+          if (buffer.length === 0) {
+            await largeObject.closeAsync();
+            await client.query("COMMIT");
+            client.release();
+            res.end(); // finished
+            return;
+          }
+          res.write(buffer);
+          readAndSend(); // continue reading
+        } catch (err) {
+          console.error("Error reading large object:", err);
+          await client.query("ROLLBACK");
+          client.release();
+          res.status(500).send("Error reading image");
+        }
+      };
+
+      readAndSend();
     });
-  } catch (err) {
-    console.error("General error:", err);
+  } catch (e) {
+    console.error("Unexpected error:", e);
     await client.query("ROLLBACK");
     client.release();
-    res.status(500).send("Server error");
+    res.status(500).send("Unexpected server error");
   }
 });
-
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
