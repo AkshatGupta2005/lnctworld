@@ -3,6 +3,7 @@ import cors from "cors";
 import nodemailer from "nodemailer";
 import { Pool } from "pg";
 import dotenv from "dotenv";
+import fs from "fs";
 dotenv.config();
 
 const app = express();
@@ -15,6 +16,9 @@ const pool = new Pool({
   database: process.env.PG_DATABASE,
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
+  ssl: {
+    ca: fs.readFileSync("ap-south-1-bundle (1).pem").toString(),
+  },
 });
 
 // Nodemailer transporter
@@ -52,6 +56,8 @@ app.post("/api/contact", async (req, res) => {
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
+
+app.get("/timeline", (req, res) => {});
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);

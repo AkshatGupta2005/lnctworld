@@ -8,6 +8,7 @@ import secretary from "../assets/Secretary_Img.png"
 import viceChair from "../assets/viceChair_img.png"
 import exe_director from "../assets/executiveDir_img.png"
 
+
 const timelineEvents = [
   { year: "1994", event: "Establishment of LNCT Bhopal" },
   { year: "2000", event: "Expansion with new courses and facilities" },
