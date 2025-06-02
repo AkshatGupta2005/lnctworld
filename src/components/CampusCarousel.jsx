@@ -33,11 +33,25 @@ const CampusCarousel = () => {
   return (
     <section className="campus-carousel-section" id="campus-life">
       <div className="container">
-        <h2 className="section-title" ref={ref}>Events</h2>
-        <p className="description">
+        <h2
+          className="section-title"
+          ref={ref}
+        >
+          Events
+        </h2>
+        <p
+          style={{
+            fontSize: "1.125rem",
+            color: "var(--text-secondary)",
+            maxWidth: "600px",
+            margin: "0 auto",
+            fontWeight: 400,
+            textAlign: "center",
+            marginBottom: "2rem"
+          }}
+        >
           Stay updated with our latest events, workshops, and networking opportunities designed to connect, inspire, and grow together
         </p>
-
         <div>
           <Swiper
             modules={[Autoplay, EffectFade, Pagination]}
