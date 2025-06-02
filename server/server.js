@@ -75,35 +75,45 @@ app.get("/api/image/:oid", async (req, res) => {
   const oid = parseInt(req.params.oid, 10);
 
   if (isNaN(oid)) {
+    client.release();
     return res.status(400).send("Invalid OID");
   }
 
   try {
     await client.query("BEGIN");
-    const lom = new LargeObjectManager({ pg: client });
-    const [stream, size] = await lom.openAndReadableStreamAsync(oid);
+    const lom = new LargeObjectManager(client);
 
-    res.setHeader("Content-Type", "image/jpeg"); // adjust if storing PNG etc.
-    stream.pipe(res);
+    lom.openAndReadableStream(oid, async (err, stream, length) => {
+      if (err) {
+        await client.query("ROLLBACK");
+        client.release();
+        console.error("Stream error:", err);
+        return res.status(500).send("Failed to open image stream");
+      }
 
-    stream.on("end", async () => {
-      await client.query("COMMIT");
-      client.release();
-    });
+      res.setHeader("Content-Type", "image/jpeg"); // or detect dynamically
+      stream.pipe(res);
 
-    stream.on("error", async (err) => {
-      console.error(err);
-      await client.query("ROLLBACK");
-      client.release();
-      res.status(500).send("Error streaming image");
+      stream.on("end", async () => {
+        await client.query("COMMIT");
+        client.release();
+      });
+
+      stream.on("error", async (streamErr) => {
+        console.error("Stream error:", streamErr);
+        await client.query("ROLLBACK");
+        client.release();
+        res.status(500).send("Streaming error");
+      });
     });
   } catch (err) {
-    console.error(err);
+    console.error("General error:", err);
     await client.query("ROLLBACK");
     client.release();
-    res.status(500).send("Failed to fetch image");
+    res.status(500).send("Server error");
   }
 });
+
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
