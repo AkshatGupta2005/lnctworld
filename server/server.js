@@ -18,6 +18,7 @@ const pool = new Pool({
   port: process.env.PG_PORT,
   ssl: {
     ca: fs.readFileSync("ap-south-1-bundle (1).pem").toString(),
+    rejectUnauthorized: false,
   },
 });
 
