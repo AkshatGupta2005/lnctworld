@@ -33,7 +33,6 @@ const transporter = nodemailer.createTransport({
 
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
-  console.log(name, email.message);
   try {
     // Save to PostgreSQL
     await pool.query(
@@ -58,7 +57,18 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-app.get("/timeline", (req, res) => {});
+app.get("/api/events", async (req, res) => {
+  try {
+    // Save to PostgreSQL
+    const response = await pool.query("SELECT * FROM events");
+    res
+      .status(200)
+      .json({ success: true, message: "Event Fetched", data: response.rows });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
