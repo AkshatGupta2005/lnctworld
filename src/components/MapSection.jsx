@@ -18,21 +18,11 @@ const MapSection = () => {
   return (
     <section className="map-section" id="locations" ref={ref}>
       <div className="container">
-        <motion.h2
-          className="section-title"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
-        >
+        <h2 className="section-title">
           Our Locations
-        </motion.h2>
+        </h2>
 
-        <motion.div
-          className="map-container"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-        >
+        <div className="map-container">
           {/* Google Maps iframe (using a placeholder for now) */}
           <div className="google-map">
             <iframe
@@ -51,19 +41,14 @@ const MapSection = () => {
             <h3>Our Campuses</h3>
             <ul>
               {locations.map((location) => (
-                <motion.li
-                  key={location.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 20 }}
-                  transition={{ duration: 0.5, delay: 0.3 + location.id * 0.1 }}
-                >
+                <li key={location.id}>
                   <h4>{location.name}</h4>
                   <p>{location.address}</p>
-                </motion.li>
+                </li>
               ))}
             </ul>
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

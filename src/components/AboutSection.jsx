@@ -46,21 +46,15 @@ const AboutSection = () => {
   return (
     <section className="about-section" id="about" ref={ref}>
       <div className="container">
-        <motion.h2
+        <h2
           className="section-title"
-          initial={{ opacity: 0, y: 30 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6 }}
         >
           Visionaries Behind LNCT
-        </motion.h2>
+        </h2>
 
         <div className="about-content">
-          <motion.div
+          <div
             className="about-text"
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
           >
             <p>
               The LNCT Group of Institutions was founded by the visionary Chouksey family with a mission to provide
@@ -76,42 +70,32 @@ const AboutSection = () => {
               Today, the LNCT Group stands as a testament to the Chouksey family's dedication to education and their
               unwavering commitment to nurturing talent and fostering growth.
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="about-images"
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
+          <div className="about-images">
             <div className="image-grid">
               <img src={director} alt="Founder" />
               <img src={exe_director} alt="Executive Director" />
               <img src={secretary} alt="New Campus" />
               <img src={viceChair} alt="Graduation Ceremony" />
             </div>
-          </motion.div>
+          </div>
         </div>
 
-        <motion.div
-          className="timeline"
-          variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
-        >
+        <div className="timeline">
           <h3>Our Journey</h3>
           <div className="timeline-container">
             {timelineEvents.map((event, index) => (
-              <motion.div key={index} className="timeline-item" variants={itemVariants}>
+              <div key={index} className="timeline-item" variants={itemVariants}>
                 <div className="timeline-dot"></div>
                 <div className="timeline-content">
                   <h4>{event.year}</h4>
                   <p>{event.event}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   )

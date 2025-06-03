@@ -90,12 +90,7 @@ const ContactSection = () => {
         </h2>
 
         <div className="contact-container">
-          <motion.div
-            className="contact-info"
-            initial={{ opacity: 0, x: -50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
+          <div className="contact-info">
             <h3>Get In Touch</h3>
             <p>We'd love to hear from you. Feel free to reach out with any questions or inquiries.</p>
 
@@ -189,14 +184,9 @@ const ContactSection = () => {
                 </svg>
               </a>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            className="contact-form"
-            initial={{ opacity: 0, x: 50 }}
-            animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: 50 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
+          <div className="contact-form">
             {formStatus.submitted && (
               <div className={`form-message ${formStatus.success ? "success" : "error"}`}>{formStatus.message}</div>
             )}
@@ -227,17 +217,13 @@ const ContactSection = () => {
                 Send Message
               </button>
             </form>
-          </motion.div>
+          </div>
         </div>
       </div>
 
-      <motion.div
+      <div
         className="scroll-top"
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-        transition={{ duration: 0.5, delay: 0.8 }}
-        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-      >
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="24"
@@ -251,7 +237,7 @@ const ContactSection = () => {
         >
           <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
-      </motion.div>
+      </div>
     </section>
   )
 }

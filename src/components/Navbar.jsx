@@ -92,9 +92,6 @@ const Navbar = () => {
 
         {/* Right side buttons */}
         <div className="nav-actions">
-          <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
-            {theme === "light" ? <MoonIcon /> : <SunIcon />}
-          </button>
         </div>
 
         {/* Mobile Menu Button */}
