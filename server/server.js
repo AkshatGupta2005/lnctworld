@@ -70,6 +70,18 @@ app.get("/api/events", async (req, res) => {
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
+app.get("/api/services", async (req, res) => {
+  try {
+    // Save to PostgreSQL
+    const response = await pool.query("SELECT * FROM services");
+    res
+      .status(200)
+      .json({ success: true, message: "Event Fetched", data: response.rows });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
 app.get("/api/image/:oid", async (req, res) => {
   const oid = parseInt(req.params.oid, 10);
   if (isNaN(oid)) {
