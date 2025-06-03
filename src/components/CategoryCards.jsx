@@ -184,7 +184,9 @@ const CategoryCards = () => {
           <div className="scroll-container" ref={scrollContainerRef}>
             {services.map((service, index) => (
               <div key={service.id} className={`card card-${index + 1}`} tabIndex="0">
-                <img src={service.image || "/placeholder.svg"} alt={service.alt} className="card-image" />
+                <div className="cardImgContainer" >
+                  <img src={`https://lnctworld.onrender.com/api/image/${service.alt}` || "/placeholder.svg"} alt={service.alt} className="card-image" />
+                </div>
                 <div className="card-content">
                   <h3>{service.title}</h3>
                   <p>{service.description}</p>

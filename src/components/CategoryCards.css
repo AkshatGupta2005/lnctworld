@@ -21,8 +21,10 @@
 
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1),
+    0 8px 10px -6px rgb(0 0 0 / 0.1);
 
   /* Card Color Palette */
   --card-1-bg: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
@@ -67,7 +69,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, #fff6e9 0%, #f0f8ff 25%, #e6f3ff 50%, #fff6e9 75%, #f5f0ff 100%);
+  background: linear-gradient(
+    135deg,
+    #fff6e9 0%,
+    #f0f8ff 25%,
+    #e6f3ff 50%,
+    #fff6e9 75%,
+    #f5f0ff 100%
+  );
 }
 
 .bg-pattern {
@@ -76,9 +85,21 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: radial-gradient(circle at 25% 25%, rgba(255, 127, 62, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 75% 75%, rgba(96, 76, 195, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(128, 196, 233, 0.03) 0%, transparent 50%);
+  background-image: radial-gradient(
+      circle at 25% 25%,
+      rgba(255, 127, 62, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 75% 75%,
+      rgba(96, 76, 195, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(128, 196, 233, 0.03) 0%,
+      transparent 50%
+    );
   animation: patternFloat 20s ease-in-out infinite;
 }
 
@@ -93,7 +114,7 @@
 }
 
 .category-cards-container {
-  max-width: 1200px;
+  max-width: 80%;
   margin: 0 auto;
   padding: 60px 20px;
 }
@@ -136,8 +157,6 @@
   scrollbar-width: none;
   -ms-overflow-style: none;
   /* Reduced fog effect */
-  mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 2%, black 98%, transparent 100%);
   scroll-padding: 24px;
 }
 
@@ -146,8 +165,8 @@
 }
 
 .card {
-  flex: 0 0 280px;
-  height: 360px;
+  flex: 0 0 280px; /* This fixes the width of the card, and thus the image's width */
+  height: 400px; /* This fixes the height of the card */
   background: var(--surface);
   border-radius: 12px;
   padding: 0;
@@ -166,31 +185,36 @@
 .card-1 {
   background: var(--card-1-bg);
   border-color: var(--card-1-border);
-  box-shadow: 0 1px 3px 0 var(--card-1-shadow), 0 1px 2px -1px var(--card-1-shadow);
+  box-shadow: 0 1px 3px 0 var(--card-1-shadow),
+    0 1px 2px -1px var(--card-1-shadow);
 }
 
 .card-2 {
   background: var(--card-2-bg);
   border-color: var(--card-2-border);
-  box-shadow: 0 1px 3px 0 var(--card-2-shadow), 0 1px 2px -1px var(--card-2-shadow);
+  box-shadow: 0 1px 3px 0 var(--card-2-shadow),
+    0 1px 2px -1px var(--card-2-shadow);
 }
 
 .card-3 {
   background: var(--card-3-bg);
   border-color: var(--card-3-border);
-  box-shadow: 0 1px 3px 0 var(--card-3-shadow), 0 1px 2px -1px var(--card-3-shadow);
+  box-shadow: 0 1px 3px 0 var(--card-3-shadow),
+    0 1px 2px -1px var(--card-3-shadow);
 }
 
 .card-4 {
   background: var(--card-4-bg);
   border-color: var(--card-4-border);
-  box-shadow: 0 1px 3px 0 var(--card-4-shadow), 0 1px 2px -1px var(--card-4-shadow);
+  box-shadow: 0 1px 3px 0 var(--card-4-shadow),
+    0 1px 2px -1px var(--card-4-shadow);
 }
 
 .card-5 {
   background: var(--card-5-bg);
   border-color: var(--card-5-border);
-  box-shadow: 0 1px 3px 0 var(--card-5-shadow), 0 1px 2px -1px var(--card-5-shadow);
+  box-shadow: 0 1px 3px 0 var(--card-5-shadow),
+    0 1px 2px -1px var(--card-5-shadow);
 }
 
 .card:hover {
@@ -199,28 +223,28 @@
 }
 
 .card-1:hover {
-  box-shadow: 0 25px 50px -12px var(--card-1-shadow), 0 20px 25px -5px var(--card-1-shadow), 0 10px 10px -5px
-    var(--card-1-shadow);
+  box-shadow: 0 25px 50px -12px var(--card-1-shadow),
+    0 20px 25px -5px var(--card-1-shadow), 0 10px 10px -5px var(--card-1-shadow);
 }
 
 .card-2:hover {
-  box-shadow: 0 25px 50px -12px var(--card-2-shadow), 0 20px 25px -5px var(--card-2-shadow), 0 10px 10px -5px
-    var(--card-2-shadow);
+  box-shadow: 0 25px 50px -12px var(--card-2-shadow),
+    0 20px 25px -5px var(--card-2-shadow), 0 10px 10px -5px var(--card-2-shadow);
 }
 
 .card-3:hover {
-  box-shadow: 0 25px 50px -12px var(--card-3-shadow), 0 20px 25px -5px var(--card-3-shadow), 0 10px 10px -5px
-    var(--card-3-shadow);
+  box-shadow: 0 25px 50px -12px var(--card-3-shadow),
+    0 20px 25px -5px var(--card-3-shadow), 0 10px 10px -5px var(--card-3-shadow);
 }
 
 .card-4:hover {
-  box-shadow: 0 25px 50px -12px var(--card-4-shadow), 0 20px 25px -5px var(--card-4-shadow), 0 10px 10px -5px
-    var(--card-4-shadow);
+  box-shadow: 0 25px 50px -12px var(--card-4-shadow),
+    0 20px 25px -5px var(--card-4-shadow), 0 10px 10px -5px var(--card-4-shadow);
 }
 
 .card-5:hover {
-  box-shadow: 0 25px 50px -12px var(--card-5-shadow), 0 20px 25px -5px var(--card-5-shadow), 0 10px 10px -5px
-    var(--card-5-shadow);
+  box-shadow: 0 25px 50px -12px var(--card-5-shadow),
+    0 20px 25px -5px var(--card-5-shadow), 0 10px 10px -5px var(--card-5-shadow);
 }
 
 .card::before {
@@ -230,7 +254,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 100%
+  );
   opacity: 0;
   transition: opacity 0.4s ease;
   pointer-events: none;
@@ -241,12 +269,23 @@
   opacity: 1;
 }
 
+.cardImgContainer {
+  width: 100%; /* Takes the full width of the card (280px) */
+  height: 200px; /* Set a fixed height for the image area. Adjust this value as needed. */
+  /* For example, if you want the image to take half the card height (360px / 2 = 180px). */
+  overflow: hidden; /* Ensures any part of the image larger than this container is clipped */
+  position: relative; /* Keep if needed for other styling, like ::before elements */
+  /* REMOVE flex: 1; from here to prevent variable height based on other card content */
+}
+
 .card-image {
-  width: 100%;
-  height: 180px;
-  object-fit: cover;
-  background: var(--bg-tertiary);
-  transition: transform 0.3s ease;
+  width: 100%; /* Makes the image fill the width of .cardImgContainer */
+  height: 100%; /* Makes the image fill the fixed height of .cardImgContainer (e.g., 180px) */
+  object-fit: cover; /* This is key: it scales the image to maintain its aspect ratio while filling the container. */
+  /* If the image's aspect ratio doesn't match the container's, it will be cropped. */
+  display: block; /* Removes any extra space below the image if it's an inline element */
+  /* REMOVE flex: 1; from here, it's not needed as height and width are 100% of the parent */
+  /* You can also try removing !important if it's not strictly necessary due to other conflicting styles */
 }
 
 .card:hover .card-image {
@@ -255,7 +294,7 @@
 
 .card-content {
   padding: 24px;
-  flex: 1;
+  height: 200px;
   display: flex;
   flex-direction: column;
   background: rgba(255, 255, 255, 0.9);
@@ -502,7 +541,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(135deg, rgba(255, 127, 62, 0.05) 0%, rgba(96, 76, 195, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 127, 62, 0.05) 0%,
+    rgba(96, 76, 195, 0.05) 100%
+  );
   opacity: 0;
   transition: opacity 0.4s ease;
   border-radius: 25px;
@@ -608,11 +651,6 @@
     flex: 0 0 260px;
     height: 340px;
   }
-
-  .card-image {
-    height: 160px;
-  }
-
   .card-content {
     padding: 20px;
   }
@@ -621,8 +659,20 @@
     gap: 16px;
     padding: 16px 0;
     /* Less fog on mobile */
-    mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%);
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 5%,
+      black 95%,
+      transparent 100%
+    );
   }
 
   .nav-button {
@@ -648,10 +698,6 @@
   .card {
     flex: 0 0 240px;
     height: 320px;
-  }
-
-  .card-image {
-    height: 140px;
   }
 
   .card-content {
