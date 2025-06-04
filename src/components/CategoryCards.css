@@ -606,7 +606,6 @@
     padding: 25px;
     height: 320px;
   }
-
   .category-icon {
     font-size: 2.5rem;
   }
@@ -682,8 +681,8 @@
   }
 
   .card {
-    flex: 0 0 240px;
-    height: 320px;
+    flex: 0 0 90%;
+    max-width: 90%;
   }
 
   .card-content {
@@ -703,5 +702,21 @@
     width: 36px;
     height: 36px;
     font-size: 1rem;
+  }
+}
+@media (max-width: 600px) {
+  .card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+@media (max-width: 300px) {
+  .scroll-container {
+    display: block;
+  }
+  .card {
+    margin-bottom: 20px;
+    flex: none;
+    width: 100%;
   }
 }
