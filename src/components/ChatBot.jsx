@@ -208,11 +208,9 @@ const ChatBot = () => {
   return (
     <>
       {/* Premium Chat Toggle Button */}
-      <motion.div
+      <div
         className="premium-chat-toggle"
         onClick={toggleChat}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
         animate={isOpen ? { rotate: 180 } : { rotate: 0 }}
       >
         <div className="toggle-aurora"></div>
@@ -228,17 +226,13 @@ const ChatBot = () => {
           )}
         </div>
         <div className="toggle-ripple"></div>
-      </motion.div>
+      </div>
 
       {/* Premium Chat Container */}
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <div
             className={`premium-chat-container ${isMaximized ? "maximized" : ""}`}
-            initial={{ opacity: 0, y: 40, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 40, scale: 0.9 }}
-            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <div className="chat-glass-bg"></div>
             <div className="chat-mesh-gradient"></div>
@@ -268,11 +262,9 @@ const ChatBot = () => {
                 </div>
 
                 <div className="header-actions">
-                  <motion.button
+                  <button
                     className="action-btn maximize-btn"
                     onClick={maximizeChat}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     title={isMaximized ? "Restore" : "Maximize"}
                   >
                     {isMaximized ? (
@@ -290,12 +282,10 @@ const ChatBot = () => {
                         <path d="M3 21l7-7"></path>
                       </svg>
                     )}
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     className="action-btn clear-btn"
                     onClick={clearChat}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     title="Clear Chat"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -303,19 +293,17 @@ const ChatBot = () => {
                       <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
                       <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
                     </svg>
-                  </motion.button>
-                  <motion.button
+                  </button>
+                  <button
                     className="action-btn close-btn"
                     onClick={toggleChat}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.9 }}
                     title="Close"
                   >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <line x1="18" y1="6" x2="6" y2="18"></line>
                       <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
-                  </motion.button>
+                  </button>
                 </div>
               </div>
             </div>
@@ -326,13 +314,10 @@ const ChatBot = () => {
               <div className="messages-list">
                 <AnimatePresence mode="popLayout">
                   {messages.map((message) => (
-                    <motion.div
+                    <div
                       key={message.id}
                       className={`premium-message ${message.sender}`}
-                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                      transition={{ duration: 0.4, ease: "easeOut" }}
                       layout
                     >
                       <div className="message-container">
@@ -342,18 +327,15 @@ const ChatBot = () => {
                         </div>
                         {message.sender === "bot" && <div className="message-glow"></div>}
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </AnimatePresence>
 
                 {/* Premium Typing Indicator */}
                 <AnimatePresence>
                   {isTyping && (
-                    <motion.div
+                    <div
                       className="typing-indicator"
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
                     >
                       <div className="typing-container">
                         <div className="typing-animation">
@@ -362,7 +344,7 @@ const ChatBot = () => {
                           <span></span>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                 </AnimatePresence>
 
@@ -372,31 +354,25 @@ const ChatBot = () => {
 
             {/* Premium Quick Actions */}
             {messages.length <= 1 && (
-              <motion.div
+              <div
                 className="premium-quick-actions"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1 }}
               >
                 <p className="quick-actions-title">Quick Explore:</p>
                 <div className="quick-actions-list">
                   {quickActions.map((action, index) => (
-                    <motion.button
+                    <button
                       key={index}
                       className="quick-action-item"
                       onClick={() => handleQuickAction(action.action)}
                       whileHover={{ scale: 1.02, y: -2 }}
                       whileTap={{ scale: 0.98 }}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.2 + index * 0.1 }}
                     >
                       <span className="action-label">{action.text}</span>
                       <div className="action-shine"></div>
-                    </motion.button>
+                    </button>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             )}
 
             {/* Premium Input Area */}
@@ -436,7 +412,7 @@ const ChatBot = () => {
                 </div>
               </form>
             </div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </>

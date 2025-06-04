@@ -10,14 +10,14 @@ import ContactSection from "../components/ContactSection"
 
 const HomePage = () => {
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }}>
+    <div>
       <HeroSection />
       <CategoryCards />
       <CampusCarousel />
       <AboutSection />
       <MapSection />
       <ContactSection />
-    </motion.div>
+    </div>
   )
 }
 

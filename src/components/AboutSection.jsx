@@ -1,13 +1,34 @@
 "use client"
 
-import { useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import { useEffect, useRef, useState } from "react"
 import "./AboutSection.css"
 import director from "../assets/director_img.png"
 import secretary from "../assets/Secretary_Img.png"
 import viceChair from "../assets/viceChair_img.png"
 import exe_director from "../assets/executiveDir_img.png"
 
+const leaders = [
+  {
+    name: "Founder & Chairman",
+    image: director,
+    message: "We started LNCT with a mission to empower youth through quality education. The journey has been remarkable.",
+  },
+  {
+    name: "Vice Chairperson",
+    image: viceChair,
+    message: "Our vision is to constantly innovate and improve the learning experience for our students.",
+  },
+  {
+    name: "Executive Director",
+    image: exe_director,
+    message: "At LNCT, we focus on holistic development—academics, ethics, and innovation go hand in hand.",
+  },
+  {
+    name: "Secretary",
+    image: secretary,
+    message: "Every student deserves a bright future. Our institution is committed to making that a reality.",
+  },
+]
 
 const timelineEvents = [
   { year: "1994", event: "Establishment of LNCT Bhopal" },
@@ -19,74 +40,50 @@ const timelineEvents = [
 ]
 
 const AboutSection = () => {
-  const ref = useRef(null)
-  const isInView = useInView(ref, { once: false, amount: 0.2 })
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const slideIntervalRef = useRef(null)
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.2,
-      },
-    },
-  }
+  useEffect(() => {
+    slideIntervalRef.current = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % leaders.length)
+    }, 10000)
 
-  const itemVariants = {
-    hidden: { y: 30, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 0.6,
-      },
-    },
-  }
+    return () => clearInterval(slideIntervalRef.current)
+  }, [])
 
   return (
-    <section className="about-section" id="about" ref={ref}>
+    <section className="about-section" id="about">
       <div className="container">
-        <h2
-          className="section-title"
-        >
-          Visionaries Behind LNCT
-        </h2>
+        <h2 className="section-title">Visionaries Behind LNCT</h2>
 
-        <div className="about-content">
-          <div
-            className="about-text"
-          >
-            <p>
-              The LNCT Group of Institutions was founded by the visionary Chouksey family with a mission to provide
-              quality education and create future leaders. What started as a single institution has now grown into a
-              vast educational ecosystem spanning across multiple cities.
-            </p>
-            <p>
-              With a strong focus on academic excellence, research, and innovation, LNCT has consistently maintained its
-              position as one of the premier educational groups in central India. The group's philosophy revolves around
-              holistic development, combining theoretical knowledge with practical skills.
-            </p>
-            <p>
-              Today, the LNCT Group stands as a testament to the Chouksey family's dedication to education and their
-              unwavering commitment to nurturing talent and fostering growth.
-            </p>
-          </div>
-
-          <div className="about-images">
-            <div className="image-grid">
-              <img src={director} alt="Founder" />
-              <img src={exe_director} alt="Executive Director" />
-              <img src={secretary} alt="New Campus" />
-              <img src={viceChair} alt="Graduation Ceremony" />
+        {/* Leader Slider */}
+        <div className="leader-slider">
+          <div className="slide-content">
+            <div className="leader-image">
+              <img src={leaders[currentSlide].image} alt={leaders[currentSlide].name} />
             </div>
+            <div className="leader-info">
+              <h3>{leaders[currentSlide].name}</h3>
+              <p className="leader-message">{leaders[currentSlide].message}</p>
+            </div>
+          </div>
+          <div className="slider-dots">
+            {leaders.map((_, index) => (
+              <button
+                key={index}
+                className={`dot ${currentSlide === index ? "active" : ""}`}
+                onClick={() => setCurrentSlide(index)}
+              ></button>
+            ))}
           </div>
         </div>
 
+        {/* Timeline */}
         <div className="timeline">
           <h3>Our Journey</h3>
           <div className="timeline-container">
             {timelineEvents.map((event, index) => (
-              <div key={index} className="timeline-item" variants={itemVariants}>
+              <div key={index} className="timeline-item">
                 <div className="timeline-dot"></div>
                 <div className="timeline-content">
                   <h4>{event.year}</h4>

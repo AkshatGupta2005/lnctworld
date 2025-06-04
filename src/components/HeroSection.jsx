@@ -29,7 +29,7 @@ const HeroSection = () => {
     // Load globe texture
     const textureLoader = new THREE.TextureLoader()
     const earthTexture = textureLoader.load(
-      "/textures/Untitled (4).png"
+      "/textures/Untitled (6).png"
     )
 
     const geometry = new THREE.SphereGeometry(1.2, 64, 64)
