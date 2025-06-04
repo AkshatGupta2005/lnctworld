@@ -92,6 +92,7 @@ const Navbar = () => {
 
         {/* Right side buttons */}
         <div className="nav-actions">
+          <div className="login-btn">Login</div>
         </div>
 
         {/* Mobile Menu Button */}
