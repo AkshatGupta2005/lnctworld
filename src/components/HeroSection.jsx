@@ -125,7 +125,7 @@ const HeroSection = () => {
               transition={{ duration: 1, delay: 3.2 }}
             >
               <motion.a
-                href="/home"
+                href="#services"
                 className="explore-universe-btn"
                 whileHover={{ scale: 1.05, y: -3 }}
                 whileTap={{ scale: 0.95 }}
