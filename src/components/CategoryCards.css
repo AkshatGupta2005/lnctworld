@@ -643,21 +643,6 @@
   .scroll-container {
     gap: 16px;
     padding: 16px 0;
-    /* Less fog on mobile */
-    mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 5%,
-      black 95%,
-      transparent 100%
-    );
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent 0%,
-      black 5%,
-      black 95%,
-      transparent 100%
-    );
   }
 
   .nav-button {
@@ -667,11 +652,11 @@
   }
 
   .nav-button.prev {
-    left: 5px;
+    left: 1px;
   }
 
   .nav-button.next {
-    right: 5px;
+    right: 1px;
   }
 }
 
@@ -707,7 +692,10 @@
 @media (max-width: 600px) {
   .card {
     flex: 0 0 100%;
-    max-width: 100%;
+    max-width: 90%;
+  }
+  .category-cards-container {
+    max-width: 90%;
   }
 }
 @media (max-width: 300px) {
