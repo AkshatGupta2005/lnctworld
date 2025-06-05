@@ -246,3 +246,8 @@
     font-size: 1.3rem;
   }
 }
+
+.leader-info h4:hover {
+  background: linear-gradient(90deg, #f3eaff 0%, #ffe9e0 100%);
+  color: #6639da;
+}
