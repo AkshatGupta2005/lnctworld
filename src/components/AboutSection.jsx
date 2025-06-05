@@ -9,22 +9,26 @@ import exe_director from "../assets/executiveDir_img.png"
 
 const leaders = [
   {
-    name: "Founder & Chairman",
+    name: "Shri Jai Narain Chouksey",
+    title: "Founder & Chairman",
     image: director,
     message: "We started LNCT with a mission to empower youth through quality education. The journey has been remarkable.",
   },
   {
-    name: "Vice Chairperson",
+    name: "Smt. Poonam Chouksey",
+    title: "Vice Chairperson",
     image: viceChair,
     message: "Our vision is to constantly innovate and improve the learning experience for our students.",
   },
   {
-    name: "Executive Director",
+    name: "Smt. Poojashree Chouksey",
+    title: "Executive Director",
     image: exe_director,
     message: "At LNCT, we focus on holistic development—academics, ethics, and innovation go hand in hand.",
   },
   {
-    name: "Secretary",
+    name: "Dr. Anupam Chouksey",
+    title: "Secretary",
     image: secretary,
     message: "Every student deserves a bright future. Our institution is committed to making that a reality.",
   },
@@ -66,6 +70,7 @@ const AboutSection = () => {
             </div>
             <div className="leader-info">
               <h3>{leaders[currentSlide].name}</h3>
+              <h4 style={{ margin: 0, fontWeight: 400 }}>{leaders[currentSlide].title}</h4>
               <p className="leader-message">{leaders[currentSlide].message}</p>
             </div>
           </div>
