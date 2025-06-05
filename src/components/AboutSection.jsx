@@ -32,11 +32,13 @@ const leaders = [
 
 const timelineEvents = [
   { year: "1994", event: "Establishment of LNCT Bhopal" },
-  { year: "2000", event: "Expansion with new courses and facilities" },
-  { year: "2008", event: "Opening of LNCT University" },
-  { year: "2012", event: "Establishment of LNCT Medical College" },
-  { year: "2018", event: "Launch of Digital Learning Platforms" },
-  { year: "2023", event: "Celebrating 30 years of excellence" },
+  { year: "2004", event: "Launch of LNCT Indore campus." },
+  { year: "2006", event: "Founding of LNCTS (Lakshmi Narain College of Technology & Science), Bhopal." },
+  { year: "2007", event: "Establishment of LNCTE (Lakshmi Narain College of Technology Excellence), Bhopal." },
+  { year: "2008", event: "Inception of LNCT Jabalpur campus." },
+  { year: "2015", event: "Formation of LNCT University, Bhopal." },
+  { year: "2021", event: "Opening of LNCT Medical College and Sewakunj Hospital, Indore." },
+  { year: "2023", event: "Establishment of Kalchuri LNCT Group Incubation Centre (KLIC), Celebrating 30 Years of Excellence" },
 ]
 
 const AboutSection = () => {
