@@ -582,7 +582,7 @@ export default function ModernChatbot() {
   }
 
   return (
-    <div className="chatbot-container">
+    <div className="chatbot-theme chatbot-container">
       <div className="mesh-background" />
 
       <button
