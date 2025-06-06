@@ -1,422 +1,955 @@
 "use client"
 
-import { useState, useRef, useEffect } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import "./ChatBot.css"
-import chatIcon from "../assets/chatLogo.svg"
+import { useState, useEffect, useRef } from "react"
+import {
+  MessageCircle,
+  X,
+  Maximize2,
+  Minimize2,
+  Trash2,
+  Send,
+  User,
+  Bot,
+  Keyboard,
+  Mic,
+  MicOff,
+  Volume2,
+  VolumeX,
+  Lightbulb,
+  AudioWaveformIcon as Waveform,
+  StopCircle,
+} from "lucide-react"
+import "./chatbot.css"
 
-const ChatBot = () => {
+export default function ModernChatbot() {
   const [isOpen, setIsOpen] = useState(false)
-  const [messages, setMessages] = useState([])
+  const [isMaximized, setIsMaximized] = useState(false)
+  const [messages, setMessages] = useState([
+    {
+      id: "1",
+      text: "Hi! I'm UniBot, your AI assistant for university information. I can help you with admissions, courses, campus life, and more. What would you like to know?",
+      isUser: false,
+      timestamp: new Date(),
+      suggestions: [
+        "Tell me about admission requirements",
+        "What courses do you offer?",
+        "How can I schedule a campus tour?",
+        "What financial aid options are available?",
+      ],
+    },
+  ])
   const [inputValue, setInputValue] = useState("")
   const [isTyping, setIsTyping] = useState(false)
-  const [isMaximized, setIsMaximized] = useState(false)
+  const [botStatus, setBotStatus] = useState("Online")
+  const [showShortcuts, setShowShortcuts] = useState(false)
+
+  // Voice recognition states
+  const [isListening, setIsListening] = useState(false)
+  const [isVoiceSupported, setIsVoiceSupported] = useState(false)
+  const [voiceError, setVoiceError] = useState(null)
+  const [lastVoiceCommand, setLastVoiceCommand] = useState(null)
+  const [isSpeechEnabled, setIsSpeechEnabled] = useState(true)
+  const [isProcessingVoice, setIsProcessingVoice] = useState(false)
+
+  const [showVoiceModal, setShowVoiceModal] = useState(false)
+  const [voiceTranscription, setVoiceTranscription] = useState({
+    isActive: false,
+    transcript: "",
+    interimTranscript: "",
+    confidence: 0,
+    isListening: false,
+    error: null,
+  })
+  const [transcriptionHistory, setTranscriptionHistory] = useState([])
+
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
+  const recognitionRef = useRef(null)
+  const synthRef = useRef(null)
 
-  // Enhanced predefined responses
-  const botResponses = {
-    greetings: {
-      keywords: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening", "namaste"],
-      responses: [
-        "🌟 Hello! Welcome to the LNCT Universe! I'm your cosmic guide. How can I help you explore our educational galaxy today?",
-        "✨ Hi there, space explorer! Ready to discover the wonders of LNCT? What would you like to know?",
-        "🚀 Greetings, fellow traveler! I'm here to guide you through the LNCT cosmos. What interests you most?",
-      ],
+  const keyboardShortcuts = [
+    { key: "Esc", description: "Close chat window" },
+    { key: "Enter", description: "Send message" },
+    { key: "Shift + Enter", description: "Add new line" },
+    { key: "Ctrl + B", description: "Clear chat history" },
+    { key: "Ctrl + M", description: "Maximize/minimize chat" },
+    { key: "Ctrl + V", description: "Toggle voice recognition" },
+    { key: "?", description: "Show/hide keyboard shortcuts" },
+  ]
+
+  const voiceCommands = [
+    {
+      command: "send message",
+      action: () => handleSendMessage(),
+      description: "Send the current message",
     },
-    lnct_info: {
-      keywords: ["lnct", "about lnct", "what is lnct", "lnct university", "lnct group"],
-      responses: [
-        "🎓 LNCT (Lakshmi Narain College of Technology) is a premier educational constellation established in 1994. We offer stellar education across engineering, management, medical sciences, and more across multiple campuses in Madhya Pradesh.",
-        "🌟 LNCT Group is a universe of educational excellence with 30+ years of legacy. We're known for our innovative teaching, industry partnerships, and holistic student development.",
-        "✨ The LNCT Universe encompasses colleges, schools, medical institutions, and digital platforms, creating a complete educational ecosystem for learners at every level.",
-      ],
+    {
+      command: "clear chat",
+      action: () => clearChat(),
+      description: "Clear chat history",
     },
-    courses: {
-      keywords: ["courses", "programs", "degree", "engineering", "medical", "management", "what courses"],
-      responses: [
-        "📚 Our cosmic curriculum includes:\n🔹 Engineering (B.Tech, M.Tech)\n🔹 Management (MBA, BBA)\n🔹 Medical (MBBS, Nursing)\n🔹 Pharmacy (B.Pharm, M.Pharm)\n🔹 Computer Applications (BCA, MCA)\n🔹 And many more stellar programs!",
-        "🎯 We offer programs across multiple galaxies of knowledge:\n⭐ Technical Education\n⭐ Healthcare & Medical\n⭐ Business & Management\n⭐ Digital & IT\n⭐ Research & Innovation",
-        "🚀 From undergraduate to doctoral programs, our educational universe has something for every aspiring mind. Which field interests you most?",
-      ],
+    {
+      command: "close chat",
+      action: () => setIsOpen(false),
+      description: "Close the chat window",
     },
-    admission: {
-      keywords: ["admission", "apply", "application", "how to join", "eligibility", "entrance"],
-      responses: [
-        "🎯 Ready to join our universe? Admissions are open! Visit our admission portal or contact our helpline at +91 755 123 4567. Our cosmic counselors will guide you through the process.",
-        "✨ To begin your journey in the LNCT Universe:\n🔹 Check eligibility criteria\n🔹 Fill online application\n🔹 Appear for entrance test (if required)\n🔹 Attend counseling\n🔹 Secure your seat among the stars!",
-        "🌟 Admission process varies by program. For detailed information about your preferred course, please visit our website or speak with our admission team.",
-      ],
+    {
+      command: "maximize chat",
+      action: () => setIsMaximized(true),
+      description: "Maximize chat window",
     },
-    campus: {
-      keywords: ["campus", "location", "bhopal", "indore", "jabalpur", "facilities"],
-      responses: [
-        "🏫 Our educational universe spans across:\n🌟 Bhopal (Main Campus)\n🌟 Indore\n🌟 Jabalpur\nEach campus is equipped with state-of-the-art facilities, modern labs, and cosmic learning environments!",
-        "🌍 LNCT campuses are strategically located across Madhya Pradesh, offering world-class infrastructure, research facilities, and a vibrant campus life.",
-        "✨ Our campuses feature smart classrooms, advanced laboratories, libraries, sports complexes, hostels, and everything needed for a stellar educational experience.",
-      ],
+    {
+      command: "minimize chat",
+      action: () => setIsMaximized(false),
+      description: "Minimize chat window",
     },
-    placement: {
-      keywords: ["placement", "job", "career", "companies", "salary", "recruitment"],
-      responses: [
-        "🚀 Our placement record is stellar! Students are recruited by top companies like TCS, Infosys, Wipro, Microsoft, Google, and many more. Average packages range from 3-15 LPA with highest going up to 50+ LPA!",
-        "⭐ LNCT has a dedicated placement cell that works tirelessly to connect our students with leading companies across various industries. We maintain 85%+ placement rates consistently.",
-        "🌟 Career opportunities are infinite in the LNCT Universe! Our industry partnerships ensure students get exposure to real-world projects and excellent job prospects.",
-      ],
+    {
+      command: "show shortcuts",
+      action: () => setShowShortcuts(true),
+      description: "Show keyboard shortcuts",
     },
-    fees: {
-      keywords: ["fee", "cost", "fees structure", "scholarship", "financial"],
-      responses: [
-        "💰 Fee structure varies by program and campus. We also offer various scholarships based on merit and need. For detailed fee information, please contact our admission office or visit our website.",
-        "🌟 We believe quality education should be accessible. LNCT offers competitive fees with flexible payment options and scholarship opportunities for deserving students.",
-        "✨ Investment in your future at LNCT is worth every penny! Contact our financial aid team to learn about fee structure and available scholarships.",
-      ],
+    {
+      command: "hide shortcuts",
+      action: () => setShowShortcuts(false),
+      description: "Hide keyboard shortcuts",
     },
-    contact: {
-      keywords: ["contact", "phone", "email", "address", "reach"],
-      responses: [
-        "📞 Connect with the LNCT Universe:\n🔹 Phone: +91 755 123 4567\n🔹 Email: info@lnct.ac.in\n🔹 Address: Raisen Road, Bhopal, MP\n🔹 Website: www.lnct.ac.in",
-        "🌟 Our cosmic support team is always ready to help! Reach out through any of our communication channels and we'll guide you through your queries.",
-        "✨ For immediate assistance, call our helpline. For detailed queries, email us. Our team responds faster than light speed!",
-      ],
+    {
+      command: "stop listening",
+      action: () => stopListening(),
+      description: "Stop voice recognition",
     },
-    default: [
-      "🤔 That's an interesting question! While I'm still learning about the vast LNCT Universe, I'd recommend contacting our expert team at +91 755 123 4567 for detailed information.",
-      "🌟 I'm constantly expanding my knowledge of the LNCT cosmos! For specific queries, our human experts would be better equipped to help. Try calling +91 755 123 4567.",
-      "✨ Great question! While I navigate through my cosmic database, feel free to reach out to our support team for immediate assistance.",
-    ],
-  }
+  ]
 
-  // Auto-scroll to bottom
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-    }
-  }, [messages])
+  // Contextual responses with suggestions
+  const getContextualResponse = (userMessage) => {
+    const message = userMessage.toLowerCase()
 
-  // Focus input when chat opens
-  useEffect(() => {
-    if (isOpen && inputRef.current) {
-      setTimeout(() => inputRef.current.focus(), 300)
-    }
-  }, [isOpen])
-
-  const toggleChat = () => {
-    setIsOpen(!isOpen)
-    setIsMaximized(false)
-
-    if (!isOpen && messages.length === 0) {
-      setTimeout(() => {
-        setMessages([
-          {
-            id: 1,
-            text: "🌟 Welcome to the LNCT Universe! I'm your AI guide ready to help you explore our educational cosmos. What would you like to discover today?",
-            sender: "bot",
-            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-          },
-        ])
-      }, 500)
-    }
-  }
-
-  const maximizeChat = () => {
-    setIsMaximized(!isMaximized)
-  }
-
-  const clearChat = () => {
-    setMessages([])
-    setMessages([
-      {
-        id: 1,
-        text: "🌟 Chat cleared! How can I help you explore the LNCT Universe?",
-        sender: "bot",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      },
-    ])
-  }
-
-  const handleInputChange = (e) => {
-    setInputValue(e.target.value)
-  }
-
-  const findBestResponse = (userInput) => {
-    const input = userInput.toLowerCase()
-
-    for (const [category, data] of Object.entries(botResponses)) {
-      if (category === "default") continue
-
-      const hasKeyword = data.keywords.some((keyword) => input.includes(keyword))
-      if (hasKeyword) {
-        const responses = data.responses
-        return responses[Math.floor(Math.random() * responses.length)]
+    if (message.includes("admission") || message.includes("apply") || message.includes("requirements")) {
+      return {
+        text: "Great question about admissions! Our university has a holistic admissions process. Here's what you need to know:\n\n• **GPA Requirement**: Minimum 3.0 GPA\n• **Standardized Tests**: SAT/ACT scores (optional for 2024)\n• **Application Deadline**: January 15th for Fall admission\n• **Required Documents**: Transcripts, essays, letters of recommendation\n\nWould you like me to elaborate on any of these requirements?",
+        suggestions: [
+          "What's the average GPA of admitted students?",
+          "Tell me about the essay requirements",
+          "How important are extracurricular activities?",
+          "Can I apply for spring admission?",
+        ],
       }
     }
 
-    const defaultResponses = botResponses.default
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)]
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-
-    if (inputValue.trim() === "") return
-
-    const userMessage = {
-      id: messages.length + 1,
-      text: inputValue,
-      sender: "user",
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    if (
+      message.includes("course") ||
+      message.includes("program") ||
+      message.includes("major") ||
+      message.includes("study")
+    ) {
+      return {
+        text: "We offer a wide range of academic programs! Here are our most popular areas:\n\n🎓 **Undergraduate Programs**:\n• Business Administration\n• Computer Science\n• Engineering\n• Liberal Arts\n• Health Sciences\n\n🎓 **Graduate Programs**:\n• MBA\n• Master's in Data Science\n• Master's in Education\n• Various PhD programs\n\nEach program has unique requirements and opportunities. What field interests you most?",
+        suggestions: [
+          "Tell me about the Computer Science program",
+          "What business majors do you offer?",
+          "Are there any new programs starting?",
+          "How do I change my major?",
+        ],
+      }
     }
 
-    setMessages((prev) => [...prev, userMessage])
-    setInputValue("")
-    setIsTyping(true)
+    if (message.includes("tour") || message.includes("visit") || message.includes("campus")) {
+      return {
+        text: "I'd love to help you plan a campus visit! We offer several tour options:\n\n🏫 **Campus Tours Available**:\n• **Daily Walking Tours**: 10 AM & 2 PM (Mon-Fri)\n• **Virtual Tours**: Available 24/7 online\n• **Specialized Tours**: Academic departments, residence halls\n• **Overnight Visits**: For prospective students\n\nTours typically last 90 minutes and include academic buildings, residence halls, dining facilities, and recreational areas. Would you like to schedule one?",
+        suggestions: [
+          "How do I schedule a campus tour?",
+          "Can I visit specific departments?",
+          "What should I bring to the tour?",
+          "Are weekend tours available?",
+        ],
+      }
+    }
 
-    setTimeout(
-      () => {
-        const botResponse = findBestResponse(inputValue)
+    if (
+      message.includes("financial") ||
+      message.includes("aid") ||
+      message.includes("scholarship") ||
+      message.includes("cost") ||
+      message.includes("tuition")
+    ) {
+      return {
+        text: "Financial aid is available to help make education affordable! Here's what we offer:\n\n💰 **Financial Aid Options**:\n• **Need-based Aid**: Grants and work-study programs\n• **Merit Scholarships**: Academic and talent-based awards\n• **Federal Aid**: Pell Grants, student loans\n• **Payment Plans**: Flexible tuition payment options\n\n**2024-25 Tuition**: $45,000/year (before aid)\n**Average Aid Package**: $28,000\n\nMost students receive some form of financial assistance. Have you completed the FAFSA?",
+        suggestions: [
+          "How do I apply for scholarships?",
+          "What's the FAFSA deadline?",
+          "Are there work-study opportunities?",
+          "Can international students get aid?",
+        ],
+      }
+    }
 
-        const botMessage = {
-          id: messages.length + 2,
-          text: botResponse,
-          sender: "bot",
-          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-        }
+    if (
+      message.includes("housing") ||
+      message.includes("dorm") ||
+      message.includes("residence") ||
+      message.includes("living")
+    ) {
+      return {
+        text: "Our campus housing offers a great college experience! Here are your options:\n\n🏠 **Housing Options**:\n• **Traditional Dorms**: Shared rooms, community bathrooms\n• **Suite-Style**: 2-4 bedrooms sharing a bathroom\n• **Apartments**: Full kitchens, more independence\n• **Themed Communities**: Academic or interest-based living\n\n**Housing Guarantee**: All first-year students guaranteed on-campus housing\n**Application Deadline**: May 1st for fall semester\n\nEach option includes meal plans, WiFi, and access to study spaces. What type of living situation interests you?",
+        suggestions: [
+          "What meal plans are available?",
+          "Can I choose my roommate?",
+          "Are pets allowed in dorms?",
+          "How much does housing cost?",
+        ],
+      }
+    }
 
-        setMessages((prev) => [...prev, botMessage])
-        setIsTyping(false)
-      },
-      1000 + Math.random() * 1000,
-    )
+    if (
+      message.includes("activity") ||
+      message.includes("club") ||
+      message.includes("sport") ||
+      message.includes("extracurricular")
+    ) {
+      return {
+        text: "Campus life here is vibrant with tons of opportunities to get involved!\n\n🎯 **Student Activities**:\n• **200+ Student Organizations**: Academic, cultural, recreational\n• **Greek Life**: 15 fraternities and sororities\n• **Division II Athletics**: 18 varsity sports teams\n• **Intramural Sports**: Basketball, soccer, volleyball, and more\n• **Student Government**: Leadership opportunities\n• **Community Service**: Local and international programs\n\nGetting involved is one of the best ways to make friends and develop leadership skills. What are your interests?",
+        suggestions: [
+          "How do I join a club?",
+          "What sports teams do you have?",
+          "Are there music or theater groups?",
+          "Can I start a new organization?",
+        ],
+      }
+    }
+
+    if (
+      message.includes("calendar") ||
+      message.includes("schedule") ||
+      message.includes("semester") ||
+      message.includes("break")
+    ) {
+      return {
+        text: "Here's our academic calendar for the 2024-25 year:\n\n📅 **Important Dates**:\n• **Fall Semester**: August 26 - December 13\n• **Spring Semester**: January 21 - May 9\n• **Summer Sessions**: May 19 - August 8\n\n**Breaks & Holidays**:\n• Fall Break: October 14-15\n• Thanksgiving: November 25-29\n• Winter Break: December 14 - January 20\n• Spring Break: March 10-14\n\n**Registration**: Opens 6 weeks before each semester. Need help with course planning?",
+        suggestions: [
+          "When does registration open?",
+          "How many credits should I take?",
+          "Can I take summer classes?",
+          "What's the add/drop deadline?",
+        ],
+      }
+    }
+
+    // Default response for general questions
+    return {
+      text: "Thanks for your question! I'm here to help with any university-related information. I can provide details about:\n\n• **Admissions & Applications**\n• **Academic Programs & Courses**\n• **Campus Life & Activities**\n• **Financial Aid & Scholarships**\n• **Housing & Dining**\n• **Campus Tours & Visits**\n\nWhat specific area would you like to explore?",
+      suggestions: [
+        "Tell me about admission requirements",
+        "What programs do you offer?",
+        "How can I visit the campus?",
+        "What financial aid is available?",
+      ],
+    }
   }
 
-  const quickActions = [
-    { text: "📚 Courses", action: "Tell me about courses offered" },
-    { text: "🎯 Admissions", action: "How can I apply for admission?" },
-    { text: "🏫 Campus", action: "Tell me about campus facilities" },
-    { text: "🚀 Placements", action: "What about placement opportunities?" },
-  ]
+  // Initialize speech recognition
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      const speechSynthesis = window.speechSynthesis
 
-  const handleQuickAction = (action) => {
-    setInputValue(action)
+      if (SpeechRecognition) {
+        setIsVoiceSupported(true)
+        const recognition = new SpeechRecognition()
+        recognition.continuous = true
+        recognition.interimResults = true
+        recognition.lang = "en-US"
+
+        recognition.onstart = () => {
+          setIsListening(true)
+          setVoiceError(null)
+          setIsProcessingVoice(false)
+          setVoiceTranscription((prev) => ({
+            ...prev,
+            isListening: true,
+            error: null,
+          }))
+        }
+
+        recognition.onresult = (event) => {
+          let finalTranscript = ""
+          let interimTranscript = ""
+          let confidence = 0
+
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript
+            confidence = event.results[i][0].confidence
+
+            if (event.results[i].isFinal) {
+              finalTranscript += transcript
+            } else {
+              interimTranscript += transcript
+            }
+          }
+
+          if (interimTranscript) {
+            setInputValue(interimTranscript)
+            setVoiceTranscription((prev) => ({
+              ...prev,
+              interimTranscript,
+            }))
+          }
+
+          if (finalTranscript) {
+            setIsProcessingVoice(true)
+            const command = finalTranscript.toLowerCase().trim()
+            setLastVoiceCommand(command)
+            setVoiceTranscription((prev) => ({
+              ...prev,
+              transcript: finalTranscript,
+              confidence,
+              interimTranscript: "",
+            }))
+
+            setTranscriptionHistory((prev) => [...prev, finalTranscript])
+
+            const matchedCommand = voiceCommands.find((vc) => command.includes(vc.command.toLowerCase()))
+
+            if (matchedCommand) {
+              setInputValue("")
+              matchedCommand.action()
+              setTimeout(() => {
+                setLastVoiceCommand(null)
+                setIsProcessingVoice(false)
+              }, 2000)
+            } else {
+              setInputValue(finalTranscript.trim())
+              setIsProcessingVoice(false)
+
+              if (showVoiceModal) {
+                setTimeout(() => {
+                  handleSendMessage(finalTranscript.trim())
+                  setShowVoiceModal(false)
+                }, 1000)
+              }
+            }
+          }
+        }
+
+        recognition.onerror = (event) => {
+          setVoiceError(`Voice recognition error: ${event.error}`)
+          setIsListening(false)
+          setIsProcessingVoice(false)
+          setVoiceTranscription((prev) => ({
+            ...prev,
+            isListening: false,
+            error: `Error: ${event.error}`,
+          }))
+        }
+
+        recognition.onend = () => {
+          setIsListening(false)
+          setIsProcessingVoice(false)
+          setVoiceTranscription((prev) => ({
+            ...prev,
+            isListening: false,
+          }))
+        }
+
+        recognitionRef.current = recognition
+      }
+
+      if (speechSynthesis) {
+        synthRef.current = speechSynthesis
+      }
+    }
+    // eslint-disable-next-line
+  }, [])
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 300)
+    }
+  }, [isOpen])
+
+  // Global keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isOpen) return
+
+      if (e.key === "?" && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+        setShowShortcuts((prev) => !prev)
+      }
+      if (e.key === "Escape") {
+        setIsOpen(false)
+        setShowShortcuts(false)
+        stopListening()
+      }
+      if (e.key === "b" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+        e.preventDefault()
+        clearChat()
+      }
+      if (e.key === "m" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+        e.preventDefault()
+        setIsMaximized((prev) => !prev)
+      }
+      if (e.key === "v" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+        e.preventDefault()
+        toggleListening()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+    // eslint-disable-next-line
+  }, [isOpen, isListening])
+
+  const startListening = () => {
+    if (recognitionRef.current && isVoiceSupported) {
+      try {
+        recognitionRef.current.start()
+      } catch (error) {
+        setVoiceError("Could not start voice recognition")
+      }
+    }
+  }
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop()
+    }
+  }
+
+  const openVoiceModal = () => {
+    setShowVoiceModal(true)
+    setVoiceTranscription({
+      isActive: true,
+      transcript: "",
+      interimTranscript: "",
+      confidence: 0,
+      isListening: false,
+      error: null,
+    })
+
     setTimeout(() => {
-      const event = { preventDefault: () => {} }
-      handleSubmit(event)
-    }, 100)
+      startListening()
+    }, 300)
+  }
+
+  const closeVoiceModal = () => {
+    stopListening()
+    setShowVoiceModal(false)
+    setVoiceTranscription((prev) => ({
+      ...prev,
+      isActive: false,
+    }))
+  }
+
+  const toggleListening = () => {
+    if (isListening) {
+      stopListening()
+    } else {
+      if (showVoiceModal) {
+        startListening()
+      } else {
+        openVoiceModal()
+      }
+    }
+  }
+
+  const speakText = (text) => {
+    if (synthRef.current && isSpeechEnabled) {
+      synthRef.current.cancel()
+      const cleanText = text.replace(/[*•#]/g, "").replace(/\n/g, " ")
+      const utterance = new window.SpeechSynthesisUtterance(cleanText)
+      utterance.rate = 0.9
+      utterance.pitch = 1
+      utterance.volume = 0.8
+
+      synthRef.current.speak(utterance)
+    }
+  }
+
+  const toggleSpeech = () => {
+    setIsSpeechEnabled((prev) => !prev)
+    if (synthRef.current) {
+      synthRef.current.cancel()
+    }
+  }
+
+  const handleSendMessage = async (manualMessage) => {
+    const messageToSend = manualMessage || inputValue
+
+    if (!messageToSend.trim()) return
+
+    const newMessage = {
+      id: Date.now().toString(),
+      text: messageToSend,
+      isUser: true,
+      timestamp: new Date(),
+    }
+
+    setMessages((prev) => [...prev, newMessage])
+    const userInput = messageToSend
+    setInputValue("")
+    setIsTyping(true)
+    setBotStatus("Thinking...")
+
+    if (isListening) {
+      stopListening()
+    }
+
+    setTimeout(() => {
+      const response = getContextualResponse(userInput)
+      const botResponse = {
+        id: (Date.now() + 1).toString(),
+        text: response.text,
+        isUser: false,
+        timestamp: new Date(),
+        suggestions: response.suggestions,
+      }
+      setMessages((prev) => [...prev, botResponse])
+      setIsTyping(false)
+      setBotStatus("Online")
+
+      if (isSpeechEnabled) {
+        speakText(response.text)
+      }
+    }, 2000)
+  }
+
+  const handleSuggestionClick = (suggestion) => {
+    setInputValue(suggestion)
+    inputRef.current?.focus()
+  }
+
+  const clearChat = () => {
+    setMessages([
+      {
+        id: "1",
+        text: "Hi! I'm UniBot, your AI assistant for university information. I can help you with admissions, courses, campus life, and more. What would you like to know?",
+        isUser: false,
+        timestamp: new Date(),
+        suggestions: [
+          "Tell me about admission requirements",
+          "What courses do you offer?",
+          "How can I schedule a campus tour?",
+          "What financial aid options are available?",
+        ],
+      },
+    ])
+    if (synthRef.current) {
+      synthRef.current.cancel()
+    }
+  }
+
+  const handleInputKeyDown = (e) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSendMessage()
+    }
+  }
+
+  const toggleShortcuts = () => {
+    setShowShortcuts((prev) => !prev)
+  }
+
+  const acceptTranscription = () => {
+    if (voiceTranscription.transcript) {
+      setInputValue(voiceTranscription.transcript)
+      closeVoiceModal()
+    }
+  }
+
+  const discardTranscription = () => {
+    setVoiceTranscription((prev) => ({
+      ...prev,
+      transcript: "",
+      interimTranscript: "",
+    }))
+    closeVoiceModal()
+  }
+
+  const sendTranscription = () => {
+    if (voiceTranscription.transcript) {
+      handleSendMessage(voiceTranscription.transcript)
+      closeVoiceModal()
+    }
   }
 
   return (
-    <>
-      {/* Premium Chat Toggle Button */}
-      <div
-        className="premium-chat-toggle"
-        onClick={toggleChat}
-        animate={isOpen ? { rotate: 180 } : { rotate: 0 }}
+    <div className="chatbot-container">
+      <div className="mesh-background" />
+
+      <button
+        className={`chat-toggle ${isOpen ? "open" : ""}`}
+        onClick={() => setIsOpen(!isOpen)}
+        aria-label="Toggle chat"
+        title="Open chat (? for keyboard shortcuts)"
       >
-        <div className="toggle-aurora"></div>
-        <div className="toggle-gradient"></div>
-        <div className="toggle-icon">
-          {isOpen ? (
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"></line>
-              <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-          ) : (
-            <img src={chatIcon} alt="Chat Bot Icon" />
-          )}
-        </div>
-        <div className="toggle-ripple"></div>
-      </div>
+        <div className="toggle-icon">{isOpen ? <X size={24} /> : <MessageCircle size={24} />}</div>
+        <div className="ripple-effect" />
+      </button>
 
-      {/* Premium Chat Container */}
-      <AnimatePresence>
-        {isOpen && (
-          <div
-            className={`premium-chat-container ${isMaximized ? "maximized" : ""}`}
-          >
-            <div className="chat-glass-bg"></div>
-            <div className="chat-mesh-gradient"></div>
+      <div className={`chat-window ${isOpen ? "open" : ""} ${isMaximized ? "fullscreen" : ""}`}>
+        <div className="chat-backdrop" />
 
-            {/* Premium Header */}
-            <div className="premium-chat-header">
-              <div className="header-main">
-                <div className="bot-profile">
-                  <div className="avatar-wrapper">
-                    <div className="avatar-rings">
-                      <div className="ring ring-1"></div>
-                      <div className="ring ring-2"></div>
-                      <div className="ring ring-3"></div>
-                    </div>
-                    <div className="avatar-core">
-                      <div className="avatar-bg"></div>
-                      <span className="avatar-icon">🤖</span>
-                    </div>
-                    <div className="status-dot">
-                      <div className="dot-pulse"></div>
-                    </div>
-                  </div>
-                  <div className="bot-details">
-                    <h3 className="bot-title">LNCT AI Assistant</h3>
-                    <p className="bot-subtitle">{isTyping ? "✨ Thinking..." : "🌟 Online & Ready"}</p>
-                  </div>
-                </div>
-
-                <div className="header-actions">
-                  <button
-                    className="action-btn maximize-btn"
-                    onClick={maximizeChat}
-                    title={isMaximized ? "Restore" : "Maximize"}
-                  >
-                    {isMaximized ? (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M8 3v3a2 2 0 0 1-2 2H3"></path>
-                        <path d="M21 8h-3a2 2 0 0 1-2-2V3"></path>
-                        <path d="M3 16h3a2 2 0 0 1 2 2v3"></path>
-                        <path d="M16 21v-3a2 2 0 0 1 2-2h3"></path>
-                      </svg>
-                    ) : (
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M15 3h6v6"></path>
-                        <path d="M9 21H3v-6"></path>
-                        <path d="M21 3l-7 7"></path>
-                        <path d="M3 21l7-7"></path>
-                      </svg>
-                    )}
-                  </button>
-                  <button
-                    className="action-btn clear-btn"
-                    onClick={clearChat}
-                    title="Clear Chat"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M3 6h18"></path>
-                      <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
-                      <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
-                    </svg>
-                  </button>
-                  <button
-                    className="action-btn close-btn"
-                    onClick={toggleChat}
-                    title="Close"
-                  >
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
-              </div>
+        <div className="chat-header">
+          <div className="bot-info-section">
+            <div className="bot-avatar">
+              <Bot size={20} />
+              <div className="status-indicator" />
             </div>
-
-            {/* Premium Messages Area */}
-            <div className="premium-messages-area">
-              <div className="messages-bg-pattern"></div>
-              <div className="messages-list">
-                <AnimatePresence mode="popLayout">
-                  {messages.map((message) => (
-                    <div
-                      key={message.id}
-                      className={`premium-message ${message.sender}`}
-                      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                      layout
-                    >
-                      <div className="message-container">
-                        <div className="message-content">
-                          <p className="message-text">{message.text}</p>
-                          <span className="message-time">{message.timestamp}</span>
-                        </div>
-                        {message.sender === "bot" && <div className="message-glow"></div>}
-                      </div>
-                    </div>
-                  ))}
-                </AnimatePresence>
-
-                {/* Premium Typing Indicator */}
-                <AnimatePresence>
-                  {isTyping && (
-                    <div
-                      className="typing-indicator"
-                    >
-                      <div className="typing-container">
-                        <div className="typing-animation">
-                          <span></span>
-                          <span></span>
-                          <span></span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </AnimatePresence>
-
-                <div ref={messagesEndRef} />
-              </div>
+            <div className="bot-details">
+              <h3>UniBot</h3>
+              <span className="status">{botStatus}</span>
             </div>
+          </div>
 
-            {/* Premium Quick Actions */}
-            {messages.length <= 1 && (
-              <div
-                className="premium-quick-actions"
+          <div className="header-controls">
+            {isVoiceSupported && (
+              <button
+                className="control-btn"
+                onClick={toggleSpeech}
+                title={`${isSpeechEnabled ? "Disable" : "Enable"} text-to-speech`}
+                aria-label="Toggle text-to-speech"
               >
-                <p className="quick-actions-title">Quick Explore:</p>
-                <div className="quick-actions-list">
-                  {quickActions.map((action, index) => (
-                    <button
-                      key={index}
-                      className="quick-action-item"
-                      onClick={() => handleQuickAction(action.action)}
-                      whileHover={{ scale: 1.02, y: -2 }}
-                      whileTap={{ scale: 0.98 }}
-                    >
-                      <span className="action-label">{action.text}</span>
-                      <div className="action-shine"></div>
-                    </button>
-                  ))}
-                </div>
+                {isSpeechEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+              </button>
+            )}
+            <button
+              className="control-btn"
+              onClick={toggleShortcuts}
+              title="Keyboard shortcuts"
+              aria-label="Show keyboard shortcuts"
+            >
+              <Keyboard size={16} />
+            </button>
+            <button
+              className="control-btn"
+              onClick={() => setIsMaximized(!isMaximized)}
+              title="Maximize/minimize (Ctrl+M)"
+              aria-label="Maximize or minimize chat window"
+            >
+              {isMaximized ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+            </button>
+            <button
+              className="control-btn"
+              onClick={clearChat}
+              title="Clear chat (Ctrl+B)"
+              aria-label="Clear chat history"
+            >
+              <Trash2 size={16} />
+            </button>
+            <button
+              className="control-btn close-btn"
+              onClick={() => setIsOpen(false)}
+              title="Close (Esc)"
+              aria-label="Close chat window"
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+
+        {(isListening || isProcessingVoice || lastVoiceCommand) && (
+          <div className="voice-status">
+            {isListening && !isProcessingVoice && (
+              <div className="voice-indicator listening">
+                <div className="pulse-dot" />
+                <span>Listening... Say a command or speak your message</span>
               </div>
             )}
-
-            {/* Premium Input Area */}
-            <div className="premium-input-area">
-              <div className="input-bg-blur"></div>
-              <form onSubmit={handleSubmit} className="input-form">
-                <div className="input-container">
-                  <input
-                    ref={inputRef}
-                    type="text"
-                    placeholder="Ask me about the LNCT Universe..."
-                    value={inputValue}
-                    onChange={handleInputChange}
-                    className="premium-input"
-                  />
-                  <motion.button
-                    type="submit"
-                    className="premium-send-btn"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    disabled={!inputValue.trim()}
-                  >
-                    <div className="send-btn-bg"></div>
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <line x1="22" y1="2" x2="11" y2="13"></line>
-                      <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                    </svg>
-                    <div className="send-btn-shine"></div>
-                  </motion.button>
+            {isProcessingVoice && (
+              <div className="voice-indicator processing">
+                <div className="processing-dots">
+                  <div className="dot" />
+                  <div className="dot" />
+                  <div className="dot" />
                 </div>
-              </form>
+                <span>Processing voice command...</span>
+              </div>
+            )}
+            {lastVoiceCommand && !isProcessingVoice && (
+              <div className="voice-indicator command">
+                <span>Command recognized: "{lastVoiceCommand}"</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {voiceError && (
+          <div className="voice-error">
+            <span>{voiceError}</span>
+            <button onClick={() => setVoiceError(null)}>×</button>
+          </div>
+        )}
+
+        {showShortcuts && (
+          <div className="shortcuts-panel">
+            <div className="shortcuts-header">
+              <h4>Keyboard Shortcuts & Voice Commands</h4>
+              <button
+                className="close-shortcuts"
+                onClick={() => setShowShortcuts(false)}
+                aria-label="Close shortcuts panel"
+              >
+                <X size={16} />
+              </button>
+            </div>
+            <div className="shortcuts-content">
+              <div className="shortcuts-section">
+                <h5>Keyboard Shortcuts</h5>
+                <div className="shortcuts-list">
+                  {keyboardShortcuts.map((shortcut, index) => (
+                    <div key={index} className="shortcut-item">
+                      <kbd>{shortcut.key}</kbd>
+                      <span>{shortcut.description}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              {isVoiceSupported && (
+                <div className="shortcuts-section">
+                  <h5>Voice Commands</h5>
+                  <div className="voice-commands-list">
+                    {voiceCommands.slice(0, 8).map((command, index) => (
+                      <div key={index} className="voice-command-item">
+                        <span className="command">"{command.command}"</span>
+                        <span className="description">{command.description}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
-      </AnimatePresence>
-    </>
+
+        <div className="messages-area">
+          <div className="messages-pattern" />
+          {messages.map((message, index) => (
+            <div key={message.id}>
+              <div
+                className={`message ${message.isUser ? "user" : "bot"}`}
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <div className="message-avatar">{message.isUser ? <User size={16} /> : <Bot size={16} />}</div>
+                <div className="message-bubble">
+                  <p>{message.text}</p>
+                  <span className="message-time">
+                    {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+              </div>
+
+              {message.suggestions && message.suggestions.length > 0 && (
+                <div className="suggestions-container">
+                  <div className="suggestions-header">
+                    <Lightbulb size={14} />
+                    <span>Suggested questions:</span>
+                  </div>
+                  <div className="suggestions-list">
+                    {message.suggestions.map((suggestion, suggestionIndex) => (
+                      <button
+                        key={suggestionIndex}
+                        className="suggestion-btn"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        style={{ animationDelay: `${suggestionIndex * 0.1}s` }}
+                      >
+                        {suggestion}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+
+          {isTyping && (
+            <div className="message bot typing-message">
+              <div className="message-avatar">
+                <Bot size={16} />
+              </div>
+              <div className="message-bubble">
+                <div className="typing-indicator">
+                  <div className="dot" />
+                  <div className="dot" />
+                  <div className="dot" />
+                </div>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+
+        <div className="input-area">
+          <div className="input-backdrop" />
+          <div className="input-container">
+            <input
+              ref={inputRef}
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyDown={handleInputKeyDown}
+              placeholder="Ask me anything about the university..."
+              className="message-input"
+              aria-label="Message input"
+            />
+            {isVoiceSupported && (
+              <button
+                className={`voice-btn ${isListening ? "listening" : ""} ${isProcessingVoice ? "processing" : ""}`}
+                onClick={toggleListening}
+                disabled={isProcessingVoice}
+                title={isListening ? "Stop listening (Ctrl+V)" : "Start voice input (Ctrl+V)"}
+                aria-label={isListening ? "Stop voice recognition" : "Start voice recognition"}
+              >
+                {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+                {isListening && <div className="voice-pulse" />}
+              </button>
+            )}
+            <button
+              className="send-btn"
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim()}
+              title="Send message (Enter)"
+              aria-label="Send message"
+            >
+              <Send size={18} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showVoiceModal && (
+        <div className="voice-modal-backdrop" onClick={closeVoiceModal}>
+          <div className="voice-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="voice-modal-header">
+              <h3>Voice Input</h3>
+              <button className="close-voice-modal" onClick={closeVoiceModal}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="voice-modal-content">
+              <div className="voice-visualization">
+                {voiceTranscription.isListening ? (
+                  <div className="voice-waves">
+                    <Waveform size={32} className="wave-icon" />
+                    <div className="wave-bars">
+                      {Array.from({ length: 12 }).map((_, i) => (
+                        <div key={i} className="wave-bar" style={{ animationDelay: `${i * 0.1}s` }} />
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="voice-inactive">
+                    <Mic size={32} />
+                    <span>Click the microphone to start</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="transcription-display">
+                {voiceTranscription.transcript && (
+                  <div className="final-transcript">
+                    <p>{voiceTranscription.transcript}</p>
+                    <div
+                      className="confidence-indicator"
+                      style={{ width: `${Math.max(voiceTranscription.confidence * 100, 20)}%` }}
+                    >
+                      <span>Confidence: {Math.round(voiceTranscription.confidence * 100)}%</span>
+                    </div>
+                  </div>
+                )}
+
+                {voiceTranscription.interimTranscript && (
+                  <div className="interim-transcript">
+                    <p>{voiceTranscription.interimTranscript}</p>
+                    <div className="typing-dots">
+                      <span className="dot"></span>
+                      <span className="dot"></span>
+                      <span className="dot"></span>
+                    </div>
+                  </div>
+                )}
+
+                {!voiceTranscription.transcript && !voiceTranscription.interimTranscript && (
+                  <div className="no-transcript">
+                    <p>Speak now or click the microphone button</p>
+                  </div>
+                )}
+
+                {voiceTranscription.error && (
+                  <div className="transcription-error">
+                    <p>{voiceTranscription.error}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="voice-controls">
+                <button
+                  className={`voice-control-btn ${voiceTranscription.isListening ? "listening" : ""}`}
+                  onClick={toggleListening}
+                >
+                  {voiceTranscription.isListening ? (
+                    <>
+                      <StopCircle size={24} />
+                      <span>Stop</span>
+                    </>
+                  ) : (
+                    <>
+                      <Mic size={24} />
+                      <span>Start</span>
+                    </>
+                  )}
+                </button>
+
+                <button
+                  className="voice-control-btn send"
+                  onClick={sendTranscription}
+                  disabled={!voiceTranscription.transcript}
+                >
+                  <Send size={24} />
+                  <span>Send</span>
+                </button>
+
+                <button
+                  className="voice-control-btn discard"
+                  onClick={discardTranscription}
+                  disabled={!voiceTranscription.transcript && !voiceTranscription.interimTranscript}
+                >
+                  <Trash2 size={24} />
+                  <span>Discard</span>
+                </button>
+              </div>
+
+              {transcriptionHistory.length > 0 && (
+                <div className="transcription-history">
+                  <h4>Recent Transcriptions</h4>
+                  <ul>
+                    {transcriptionHistory.slice(-3).map((item, index) => (
+                      <li
+                        key={index}
+                        onClick={() => {
+                          setInputValue(item)
+                          closeVoiceModal()
+                        }}
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   )
 }
-
-export default ChatBot
