@@ -19,7 +19,7 @@ import {
   AudioWaveformIcon as Waveform,
   StopCircle,
 } from "lucide-react"
-import "./chatbot.css"
+import "./ChatBot.css"
 
 export default function ModernChatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -582,7 +582,7 @@ export default function ModernChatbot() {
   }
 
   return (
-    <div className="chatbot-theme chatbot-container">
+    <div className="chatbot-theme   chatbot-container">
       <div className="mesh-background" />
 
       <button
