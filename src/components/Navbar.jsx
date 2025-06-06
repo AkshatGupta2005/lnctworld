@@ -37,20 +37,24 @@ const Navbar = () => {
         </a>
 
         {/* Desktop Navigation */}
-        <div className="nav-links">
-          {navLinks.map((link, index) => (
-            <a key={index} href={link.href} className="nav-link">
-              {link.title}
+          <div className="nav-links">
+            {navLinks.map((link, index) => (
+              <a key={index} href={link.href} className="nav-link">
+                {link.title}
+              </a>
+            ))}
+          </div>
+
+          {/* Right side buttons */}
+          <div className="nav-actions">
+            <a href="/login">
+              <button className="login-btn">
+                Login
+              </button>
             </a>
-          ))}
-        </div>
+          </div>
 
-        {/* Right side buttons */}
-        <div className="nav-actions">
-          <div className="login-btn">Login</div>
-        </div>
-
-        {/* Mobile Menu Button */}
+          {/* Mobile Menu Button */}
         <button onClick={() => setIsOpen(!isOpen)} className={`mobile-menu-btn ${isOpen ? "active" : ""}`} aria-label="Toggle menu">
           <span class="bar top"></span>
           <span class="bar middle"></span>

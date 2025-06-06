@@ -26,20 +26,66 @@ const HeroSection = () => {
     renderer.setSize(currentMount.clientWidth, currentMount.clientHeight)
     currentMount.appendChild(renderer.domElement)
 
-    // Load globe texture
+    // Load globe textures
     const textureLoader = new THREE.TextureLoader()
-    const earthTexture = textureLoader.load(
-      "/textures/Untitled (6) (2).png"
-    )
+    const earthTexture = textureLoader.load("/textures/earth-day.jpg") // <-- Use your new colorful map
+    const bumpTexture = textureLoader.load("/textures/earth-bump.jpg")
+    const specularTexture = textureLoader.load("/textures/earth-specular.jpg")
+    const nightTexture = textureLoader.load("/textures/earth-night.jpg") // <-- Add this file
+    const cloudsTexture = textureLoader.load("/textures/earth-clouds.png") // <-- Add this file
 
+    // Main globe
     const geometry = new THREE.SphereGeometry(1.2, 64, 64)
-    const material = new THREE.MeshStandardMaterial({ map: earthTexture })
+    const material = new THREE.MeshPhongMaterial({
+      map: earthTexture,
+      bumpMap: bumpTexture,
+      bumpScale: 0.09, // slightly more for relief
+      specularMap: specularTexture,
+      specular: new THREE.Color("white"), // brighter highlights
+      shininess: 18, // more shine
+    })
     const globe = new THREE.Mesh(geometry, material)
     scene.add(globe)
 
+    // Night lights layer
+    const nightMaterial = new THREE.MeshBasicMaterial({
+      map: nightTexture,
+      blending: THREE.AdditiveBlending,
+      transparent: true,
+      opacity: 0.5,
+    })
+    const nightGlobe = new THREE.Mesh(geometry.clone(), nightMaterial)
+    scene.add(nightGlobe)
+
+    // Clouds layer
+    const cloudsGeometry = new THREE.SphereGeometry(1.22, 64, 64)
+    const cloudsMaterial = new THREE.MeshPhongMaterial({
+      map: cloudsTexture,
+      transparent: true,
+      opacity: 0.4,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+    })
+    const clouds = new THREE.Mesh(cloudsGeometry, cloudsMaterial)
+    scene.add(clouds)
+
+    // Atmosphere glow
+    const atmosphereGeometry = new THREE.SphereGeometry(1.23, 64, 64)
+    const atmosphereMaterial = new THREE.MeshBasicMaterial({
+      color: 0x3399ff,
+      transparent: true,
+      opacity: 0.15,
+      side: THREE.BackSide,
+    })
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial)
+    scene.add(atmosphere)
+
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7)
     scene.add(ambientLight)
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 1.2)
+    directionalLight.position.set(5, 3, 5)
+    scene.add(directionalLight)
 
     // Controls (auto-rotate only)
     const controls = new OrbitControls(camera, renderer.domElement)
@@ -51,6 +97,8 @@ const HeroSection = () => {
     // Animation loop
     const animate = () => {
       requestAnimationFrame(animate)
+      // Rotate clouds for realism
+      clouds.rotation.y += 0.0005
       controls.update()
       renderer.render(scene, camera)
     }
@@ -63,6 +111,11 @@ const HeroSection = () => {
       }
       geometry.dispose()
       material.dispose()
+      nightMaterial.dispose()
+      cloudsGeometry.dispose()
+      cloudsMaterial.dispose()
+      atmosphereGeometry.dispose()
+      atmosphereMaterial.dispose()
     }
   }, [])
 
