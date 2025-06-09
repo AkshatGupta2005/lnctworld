@@ -4,10 +4,13 @@ import nodemailer from "nodemailer";
 import { Pool } from "pg";
 import dotenv from "dotenv";
 import fs from "fs";
-import { LargeObjectManager } from "pg-large-object";
+import multer from "multer";
+
 dotenv.config();
 
 const app = express();
+const upload = multer({ dest: "uploads/" });
+
 app.use(cors());
 app.use(express.json());
 
@@ -18,30 +21,27 @@ const pool = new Pool({
   password: process.env.PG_PASSWORD,
   port: process.env.PG_PORT,
   ssl: {
-    ca: fs.readFileSync("rds-ca.pem").toString(),
-    rejectUnauthorized: false, // change to true in production
+    rejectUnauthorized: false, // adjust as needed for your environment
   },
 });
 
-// Nodemailer transporter
 const transporter = nodemailer.createTransport({
-  service: "gmail", // or "hotmail", or configure with your SMTP
+  service: "gmail",
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
   },
 });
 
+// Contact form route
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
   try {
-    // Save to PostgreSQL
     await pool.query(
       "INSERT INTO contact_queries (name, email, message) VALUES ($1, $2, $3)",
       [name, email, message]
     );
 
-    // Send acknowledgment email
     const mailOptions = {
       from: process.env.EMAIL_USER,
       to: email,
@@ -58,67 +58,96 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
+// Get all events
 app.get("/api/events", async (req, res) => {
   try {
-    // Save to PostgreSQL
-    const response = await pool.query("SELECT * FROM events");
+    const response = await pool.query(
+      "SELECT id, title, description FROM events"
+    );
     res
       .status(200)
-      .json({ success: true, message: "Event Fetched", data: response.rows });
+      .json({ success: true, message: "Events fetched", data: response.rows });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
-app.get("/api/services", async (req, res) => {
-  try {
-    // Save to PostgreSQL
-    const response = await pool.query("SELECT * FROM services");
-    res
-      .status(200)
-      .json({ success: true, message: "Event Fetched", data: response.rows });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Something went wrong" });
-  }
-});
-app.get("/api/image/:oid", async (req, res) => {
-  const oid = parseInt(req.params.oid, 10);
-  if (isNaN(oid)) {
-    return res.status(400).send("Invalid OID");
-  }
 
-  const client = await pool.connect();
+// Add new event with image upload (stored as bytea)
+app.post("/api/events", upload.single("image"), async (req, res) => {
+  const { title, description } = req.body;
+  const file = req.file;
 
-  try {
-    await client.query("BEGIN");
-
-    const lom = new LargeObjectManager({ pg: client });
-    const [size, stream] = await lom.openAndReadableStreamAsync(oid, 16384); // buffer size: 16KB
-
-    res.setHeader("Content-Type", "image/jpeg");
-    res.setHeader("Content-Length", size);
-
-    stream.on("error", async (err) => {
-      console.error("Stream error:", err);
-      await client.query("ROLLBACK");
-      client.release();
-      res.status(500).send("Error reading image stream");
+  if (!title || !description || !file) {
+    return res.status(400).json({
+      success: false,
+      message: "Please provide title, description, and image file",
     });
+  }
 
-    stream.pipe(res);
+  try {
+    const imageBuffer = fs.readFileSync(file.path);
 
-    stream.on("end", async () => {
-      await client.query("COMMIT");
-      client.release();
+    const insertEvent = await pool.query(
+      "INSERT INTO events (title, description, image) VALUES ($1, $2, $3) RETURNING id, title, description",
+      [title, description, imageBuffer]
+    );
+
+    // Delete temp uploaded file after saving to DB
+    fs.unlinkSync(file.path);
+
+    res.status(201).json({
+      success: true,
+      message: "Event created successfully",
+      data: insertEvent.rows[0],
     });
   } catch (err) {
-    console.error("Unexpected error:", err);
-    await client.query("ROLLBACK");
-    client.release();
-    res.status(500).send("Unexpected server error");
+    console.error("Error creating event:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create event",
+    });
   }
 });
-app.listen(process.env.PORT, () => {
-  console.log(`Server running on port ${process.env.PORT}`);
+
+// Serve event image by event ID
+app.get("/api/event/image/:id", async (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (isNaN(id)) return res.status(400).send("Invalid event ID");
+
+  try {
+    const result = await pool.query("SELECT image FROM events WHERE id = $1", [
+      id,
+    ]);
+    if (result.rows.length === 0 || !result.rows[0].image) {
+      return res.status(404).send("Image not found");
+    }
+
+    const imageData = result.rows[0].image;
+    res.setHeader("Content-Type", "image/jpeg"); // Change type if storing other formats
+    res.send(imageData);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+});
+
+// Get all services (example from your code)
+app.get("/api/services", async (req, res) => {
+  try {
+    const response = await pool.query("SELECT * FROM services");
+    res.status(200).json({
+      success: true,
+      message: "Services fetched",
+      data: response.rows,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
