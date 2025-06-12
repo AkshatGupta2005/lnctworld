@@ -56,9 +56,9 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
         <button onClick={() => setIsOpen(!isOpen)} className={`mobile-menu-btn ${isOpen ? "active" : ""}`} aria-label="Toggle menu">
-          <span class="bar top"></span>
-          <span class="bar middle"></span>
-          <span class="bar bottom"></span>
+          <span className="bar top"></span>
+          <span className="bar middle"></span>
+          <span className="bar bottom"></span>
         </button>
       </div>
 

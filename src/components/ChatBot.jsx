@@ -19,6 +19,7 @@ import {
   AudioWaveformIcon as Waveform,
   StopCircle,
 } from "lucide-react"
+import { v4 as uuidv4 } from "uuid"
 import "./ChatBot.css"
 
 export default function ModernChatbot() {
@@ -26,7 +27,7 @@ export default function ModernChatbot() {
   const [isMaximized, setIsMaximized] = useState(false)
   const [messages, setMessages] = useState([
     {
-      id: "1",
+      id: uuidv4(),
       text: "Hi! I'm UniBot, your AI assistant for university information. I can help you with admissions, courses, campus life, and more. What would you like to know?",
       isUser: false,
       timestamp: new Date(),
@@ -482,12 +483,17 @@ export default function ModernChatbot() {
   }
 
   const handleSendMessage = async (manualMessage) => {
-    const messageToSend = manualMessage || inputValue
+    let messageToSend = manualMessage !== undefined ? manualMessage : inputValue
 
-    if (!messageToSend.trim()) return
+    // If called from a button click, manualMessage could be an event object
+    if (typeof messageToSend !== "string") {
+      messageToSend = inputValue
+    }
+
+    if (!messageToSend || typeof messageToSend.trim !== "function" || !messageToSend.trim()) return
 
     const newMessage = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       text: messageToSend,
       isUser: true,
       timestamp: new Date(),
@@ -506,7 +512,7 @@ export default function ModernChatbot() {
     setTimeout(() => {
       const response = getContextualResponse(userInput)
       const botResponse = {
-        id: (Date.now() + 1).toString(),
+        id: uuidv4(),
         text: response.text,
         isUser: false,
         timestamp: new Date(),
@@ -530,7 +536,7 @@ export default function ModernChatbot() {
   const clearChat = () => {
     setMessages([
       {
-        id: "1",
+        id: uuidv4(),
         text: "Hi! I'm UniBot, your AI assistant for university information. I can help you with admissions, courses, campus life, and more. What would you like to know?",
         isUser: false,
         timestamp: new Date(),
@@ -583,8 +589,6 @@ export default function ModernChatbot() {
 
   return (
     <div className="chatbot-theme   chatbot-container">
-      <div className="mesh-background" />
-
       <button
         className={`chat-toggle ${isOpen ? "open" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
