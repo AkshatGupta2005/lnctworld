@@ -155,4 +155,8 @@ Thank you for contributing to LNCT World and helping us spread the legacy of qua
 
 ------------------------------------------------------------
 Happy coding and enjoy exploring LNCT World! 🎉
+<<<<<<< HEAD
 ------------------------------------------------------------
+=======
+------------------------------------------------------------
+>>>>>>> 7b8312d8379bba07ebebfede7fa9d132f8140336
