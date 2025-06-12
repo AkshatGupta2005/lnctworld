@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import "./InfoPage.css"
+import web from "./AboutPage.jsx"
 
 const colleges = [
   {
@@ -13,7 +14,7 @@ const colleges = [
       "LNCT University, Bhopal is a premier institution offering a wide range of undergraduate and postgraduate courses in engineering, management, pharmacy, and more.",
     courses: ["B.Tech", "M.Tech", "MBA", "BBA", "B.Pharm", "M.Pharm"],
     established: 1994,
-    website: "https://lnct.ac.in",
+    website: "https://lnctu.ac.in/",
   },
   {
     id: 2,
@@ -87,9 +88,9 @@ const CollegesPage = () => {
                   </div>
                 </div>
 
-                <a href={college.website} className="btn" target="_blank" rel="noopener noreferrer">
-                  Visit Website
-                </a>
+                <Link to="/about" className="btn">
+                  Explore More
+                </Link>
               </div>
             </motion.div>
           ))}

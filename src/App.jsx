@@ -11,7 +11,8 @@ import IndustriesPage from "./pages/IndustriesPage.jsx"
 import DigitalPage from "./pages/DigitalPage.jsx"
 import Footer from "./components/Footer.jsx"
 import ChatBot from "./components/ChatBot.jsx"
-import LoginPage from "./components/LoginPage.jsx" // adjust path if needed
+import LoginPage from "./components/LoginPage.jsx"
+import AboutPage from "./pages/AboutPage.jsx" 
 import "./App.css"
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
             <Route path="/industries" element={<IndustriesPage />} />
             <Route path="/digital" element={<DigitalPage />} />
             <Route path="/login" element={<LoginPage />} /> {/* Add login route */}
+            <Route path="/about" element={<AboutPage />} /> {/* Add about route */}
           </Routes>
         </AnimatePresence>
         <Footer />

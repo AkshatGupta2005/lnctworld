@@ -1,0 +1,289 @@
+.about-section {
+  padding: 100px 0;
+  background-color: #f5f5f5;
+}
+
+
+.section-title {
+  font-size: 2.5rem;
+  text-align: center;
+  font-weight: 700;
+  color: #6639da;
+  margin-bottom: 60px;
+  position: relative;
+}
+
+
+.section-title::after {
+  content: "";
+  width: 80px;
+  height: 4px;
+  background: #ff6f3c;
+  display: block;
+  margin: 10px auto 0;
+  border-radius: 4px;
+}
+
+
+.leader-slider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 80px;
+}
+
+
+.slide-content {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  background: #fff;
+  padding: 40px 60px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  max-width: 900px;
+  width: 100%;
+  transition: all 0.5s ease;
+}
+
+
+.leader-image img {
+  width: 250px;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+.leader-info {
+  flex: 1;
+}
+
+
+.leader-info h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 4px; /* Less space between name and title */
+  color: #ff6f3c;
+}
+
+
+.leader-info h4 {
+  font-size: 0.70rem;
+  font-weight: 500;
+  color: #4b4b5c;
+  margin-bottom: 38px; /* More space below title for message */
+  margin-left: 2rem;   /* Title starts after a tab space */
+  letter-spacing: 0.3px;
+  text-transform: none;
+  background: #f6f7fa;
+  display: inline-block;
+  padding: 4px 14px;
+  border-radius: 5px;
+  vertical-align: middle;
+  border-left: 3px solid #6639da;
+  border-right: 3px solid #ff6f3c;
+  box-shadow: none;
+  transition: background 0.3s, color 0.3s;
+}
+
+
+.leader-message {
+  font-size: 1.1rem;
+  color: #444;
+  line-height: 1.7;
+  font-style: italic;
+  position: relative;
+  padding-left: 25px;
+  padding-top: 25px;
+}
+
+
+.leader-message::before {
+  content: "❝";
+  position: absolute;
+  left: 0;
+  top: -5px;
+  font-size: 2rem;
+  color: #ccc;
+}
+
+
+.slider-dots {
+  margin-top: 25px;
+}
+
+
+.dot {
+  width: 12px;
+  height: 12px;
+  background: #ccc;
+  border: none;
+  border-radius: 50%;
+  margin: 0 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+
+.dot.active {
+  background: #6639da;
+  transform: scale(1.2);
+}
+
+
+.timeline {
+  margin-top: 70px;
+}
+
+
+.timeline h3 {
+  font-size: 1.8rem;
+  margin-bottom: 30px;
+  color: #6639da;
+  text-align: center;
+}
+
+
+.timeline-container {
+  position: relative;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+
+.timeline-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  background-color: #ff6f3c;
+  transform: translateX(-50%);
+}
+
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+
+.timeline-item:nth-child(odd) .timeline-content {
+  margin-left: auto;
+  text-align: left;
+  padding-left: 40px;
+}
+
+
+.timeline-item:nth-child(even) .timeline-content {
+  margin-right: auto;
+  text-align: right;
+  padding-right: 40px;
+}
+
+
+.timeline-dot {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background-color: #ff6f3c;
+  border-radius: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+}
+
+
+.timeline-content {
+  width: 45%;
+}
+
+
+.timeline-content h4 {
+  font-size: 1.5rem;
+  color: #ff6f3c;
+  margin-bottom: 10px;
+}
+
+
+.timeline-content p {
+  color: #555;
+}
+
+
+@media (max-width: 992px) {
+  .slide-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px;
+  }
+
+
+  .leader-image img {
+    width: 200px;
+    height: 260px;
+  }
+
+
+  .timeline-container::before {
+    left: 30px;
+  }
+
+
+  .timeline-item:nth-child(odd) .timeline-content,
+  .timeline-item:nth-child(even) .timeline-content {
+    width: calc(100% - 60px);
+    margin-left: 60px;
+    text-align: left;
+    padding-left: 20px;
+    padding-right: 0;
+  }
+
+
+  .timeline-dot {
+    left: 30px;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .about-section {
+    padding: 50px 0;
+  }
+
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+
+  .leader-info h3 {
+    font-size: 1.5rem;
+  }
+
+
+  .leader-message {
+    font-size: 1rem;
+  }
+
+
+  .timeline h3 {
+    font-size: 1.5rem;
+  }
+
+
+  .timeline-content h4 {
+    font-size: 1.3rem;
+  }
+}
+
+
+.leader-info h4:hover {
+  background: linear-gradient(90deg, #f3eaff 0%, #ffe9e0 100%);
+  color: #6639da;
+}

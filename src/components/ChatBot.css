@@ -1430,10 +1430,8 @@ body {
   }
 }
 
-/* Add these styles at the end of the file */
-
 /* Voice Modal Styles */
-.voice-modal-backdrop {
+/* .voice-modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -1481,4 +1479,4 @@ body {
   padding: 16px 20px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: rgba(255, 255, 255, 0.05);
-}
+} */
