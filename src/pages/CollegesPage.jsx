@@ -1,15 +1,15 @@
 "use client"
 
+import { Helmet } from "react-helmet"
 import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import "./InfoPage.css"
-import web from "./AboutPage.jsx"
 
 const colleges = [
   {
     id: 1,
     name: "LNCT University, Bhopal",
-    image: "/placeholder.svg?height=300&width=500",
+    image: "/assets/lnctu.jpg", // replace with real image path
     description:
       "LNCT University, Bhopal is a premier institution offering a wide range of undergraduate and postgraduate courses in engineering, management, pharmacy, and more.",
     courses: ["B.Tech", "M.Tech", "MBA", "BBA", "B.Pharm", "M.Pharm"],
@@ -19,7 +19,7 @@ const colleges = [
   {
     id: 2,
     name: "LNCT College, Indore",
-    image: "/placeholder.svg?height=300&width=500",
+    image: "/assets/lnct-indore.jpg", // replace with real image path
     description:
       "LNCT College, Indore provides quality education in various disciplines with state-of-the-art infrastructure and experienced faculty.",
     courses: ["B.Tech", "MBA", "BCA", "MCA"],
@@ -29,7 +29,7 @@ const colleges = [
   {
     id: 3,
     name: "LNCT College, Jabalpur",
-    image: "/placeholder.svg?height=300&width=500",
+    image: "/assets/lnct-jabalpur.jpg", // replace with real image path
     description:
       "LNCT College, Jabalpur is known for its academic excellence and industry-oriented curriculum, preparing students for successful careers.",
     courses: ["B.Tech", "Polytechnic", "B.Ed"],
@@ -47,10 +47,45 @@ const CollegesPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
+      <Helmet>
+        <title>Colleges under LNCT Group | Bhopal, Indore, Jabalpur</title>
+        <meta
+          name="description"
+          content="Discover top colleges under LNCT Group in Bhopal, Indore, and Jabalpur. Explore a wide range of undergraduate and postgraduate programs with state-of-the-art facilities."
+        />
+        <meta
+          name="keywords"
+          content="LNCT, LNCT Group, LNCT colleges, LNCT University Bhopal, LNCT Indore, LNCT Jabalpur, engineering colleges MP, top colleges in Madhya Pradesh, private colleges Bhopal, LNCT courses"
+        />
+        <link rel="canonical" href="https://akshatgupta.space/colleges" />
+
+        {/* Open Graph Tags */}
+        <meta property="og:title" content="LNCT Group Colleges | Bhopal, Indore, Jabalpur" />
+        <meta
+          property="og:description"
+          content="Explore premier colleges under LNCT Group across Madhya Pradesh with top courses and industry-oriented programs."
+        />
+        <meta property="og:image" content="https://akshatgupta.space/assets/logo.png" />
+        <meta property="og:url" content="https://akshatgupta.space/colleges" />
+        <meta property="og:type" content="website" />
+
+        {/* Twitter Card Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="LNCT Colleges in MP | Engineering, Management & More" />
+        <meta
+          name="twitter:description"
+          content="Explore top LNCT colleges in Bhopal, Indore, and Jabalpur – offering engineering, pharmacy, and business courses."
+        />
+        <meta name="twitter:image" content="https://akshatgupta.space/assets/logo.png" />
+      </Helmet>
+
       <div className="info-header">
         <div className="container">
           <h1>Colleges & Universities</h1>
-          <p>Explore our prestigious colleges and universities offering a wide range of courses</p>
+          <p>
+            Explore our prestigious colleges and universities offering a wide
+            range of courses
+          </p>
         </div>
       </div>
 
@@ -65,7 +100,11 @@ const CollegesPage = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
               <div className="info-card-image">
-                <img src={college.image || "/placeholder.svg"} alt={college.name} />
+                <img
+                  src={college.image}
+                  alt={college.name}
+                  loading="lazy"
+                />
               </div>
               <div className="info-card-content">
                 <h2>{college.name}</h2>
@@ -88,9 +127,14 @@ const CollegesPage = () => {
                   </div>
                 </div>
 
-                <Link to="/about" className="btn">
-                  Explore More
-                </Link>
+                <a
+                  href={college.website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn"
+                >
+                  Visit Website
+                </a>
               </div>
             </motion.div>
           ))}
