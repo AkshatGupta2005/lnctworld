@@ -28,11 +28,11 @@ const HeroSection = () => {
 
     // Load globe textures
     const textureLoader = new THREE.TextureLoader()
-    const earthTexture = textureLoader.load("/textures/earth-day.jpg") // <-- Use your new colorful map
+    const earthTexture = textureLoader.load("https://th.bing.com/th/id/R.0bf69b1822e4c13af523c1e4dc0cb582?rik=E1KHhTAUOJbQ6w&riu=http%3a%2f%2fwallpapercave.com%2fwp%2fzRBDGWP.jpg&ehk=OOCCnIuYqqtTXlH6BZu%2faBuBincLw0H0OUTD8QLgkyo%3d&risl=&pid=ImgRaw&r=0") // <-- Use your new colorful map
     const bumpTexture = textureLoader.load("/textures/earth-bump.jpg")
     const specularTexture = textureLoader.load("/textures/earth-specular.jpg")
-    const nightTexture = textureLoader.load("/textures/earth-night.jpg") // <-- Add this file
-    const cloudsTexture = textureLoader.load("/textures/earth-clouds.png") // <-- Add this file
+    const nightTexture = textureLoader.load("scr/assets/earth.jpg") // <-- Add this file
+    const cloudsTexture = textureLoader.load("") // <-- Add this file
 
     // Main globe
     const geometry = new THREE.SphereGeometry(1.2, 64, 64)
@@ -206,7 +206,6 @@ const HeroSection = () => {
             <polyline points="6 9 12 15 18 9"></polyline>
           </svg>
         </motion.div>
-        <span>Journey into the Universe</span>
       </motion.div>
     </div>
   )

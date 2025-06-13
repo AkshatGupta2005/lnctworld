@@ -183,20 +183,27 @@ const CategoryCards = () => {
           />
           <div className="scroll-container" ref={scrollContainerRef}>
             {services.map((service, index) => (
-              <a href={service.link} className={`card card-${index + 1}`} tabIndex="0">
-                <div key={service.id}>
-                  <div className="cardImgContainer" >
-                    <img src={`https://lnctworld.onrender.com/api/image/${service.image}` || "/placeholder.svg"} alt={service.alt} className="card-image" />
-                  </div>
-                  <div className="card-content">
-                    <h3>{service.title}</h3>
-                    <p>{service.description}</p>
-                    <ul className="card-features">
-                      {service.features?.map((feature, idx) => (
-                        <li key={idx}>{feature}</li>
-                      ))}
-                    </ul>
-                  </div>
+              <a
+                key={service.id}
+                href={service.link}
+                className={`card card-${index + 1}`}
+                tabIndex="0"
+              >
+                <div className="cardImgContainer">
+                  <img
+                    src={`https://lnctworld.onrender.com/api/image/${service.image}` || "/placeholder.svg"}
+                    alt={service.alt}
+                    className="card-image"
+                  />
+                </div>
+                <div className="card-content">
+                  <h3>{service.title}</h3>
+                  <p>{service.description}</p>
+                  <ul className="card-features">
+                    {service.features?.map((feature, idx) => (
+                      <li key={idx}>{feature}</li>
+                    ))}
+                  </ul>
                 </div>
               </a>
             ))}

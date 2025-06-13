@@ -48,14 +48,43 @@ const timelineEvents = [
 const AboutSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0)
   const slideIntervalRef = useRef(null)
+  const touchStartX = useRef(null)
+  const touchEndX = useRef(null)
 
+  // Auto-slide
   useEffect(() => {
     slideIntervalRef.current = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % leaders.length)
     }, 10000)
-
     return () => clearInterval(slideIntervalRef.current)
   }, [])
+
+  // Touch handlers for mobile swipe
+  const handleTouchStart = (e) => {
+    if (window.innerWidth > 600) return // Only on mobile
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchMove = (e) => {
+    if (window.innerWidth > 600) return
+    touchEndX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    if (window.innerWidth > 600) return
+    if (touchStartX.current !== null && touchEndX.current !== null) {
+      const delta = touchEndX.current - touchStartX.current
+      if (Math.abs(delta) > 50) {
+        if (delta < 0 && currentSlide < leaders.length - 1) {
+          setCurrentSlide(currentSlide + 1)
+        } else if (delta > 0 && currentSlide > 0) {
+          setCurrentSlide(currentSlide - 1)
+        }
+      }
+    }
+    touchStartX.current = null
+    touchEndX.current = null
+  }
 
   return (
     <section className="about-section" id="about">
@@ -64,7 +93,12 @@ const AboutSection = () => {
 
         {/* Leader Slider */}
         <div className="leader-slider">
-          <div className="slide-content">
+          <div
+            className="slide-content"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             <div className="leader-image">
               <img src={leaders[currentSlide].image} alt={leaders[currentSlide].name} />
             </div>

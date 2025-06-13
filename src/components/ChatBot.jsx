@@ -19,6 +19,7 @@ import {
   AudioWaveformIcon as Waveform,
   StopCircle,
 } from "lucide-react"
+import { v4 as uuidv4 } from "uuid"
 import "./ChatBot.css"
 
 export default function ModernChatbot() {
@@ -26,7 +27,7 @@ export default function ModernChatbot() {
   const [isMaximized, setIsMaximized] = useState(false)
   const [messages, setMessages] = useState([
     {
-      id: "1",
+      id: uuidv4(),
       text: "Hi! I'm UniBot, your AI assistant for university information. I can help you with admissions, courses, campus life, and more. What would you like to know?",
       isUser: false,
       timestamp: new Date(),
@@ -482,12 +483,17 @@ export default function ModernChatbot() {
   }
 
   const handleSendMessage = async (manualMessage) => {
-    const messageToSend = manualMessage || inputValue
+    let messageToSend = manualMessage !== undefined ? manualMessage : inputValue
 
-    if (!messageToSend.trim()) return
+    // If called from a button click, manualMessage could be an event object
+    if (typeof messageToSend !== "string") {
+      messageToSend = inputValue
+    }
+
+    if (!messageToSend || typeof messageToSend.trim !== "function" || !messageToSend.trim()) return
 
     const newMessage = {
-      id: Date.now().toString(),
+      id: uuidv4(),
       text: messageToSend,
       isUser: true,
       timestamp: new Date(),
@@ -506,7 +512,7 @@ export default function ModernChatbot() {
     setTimeout(() => {
       const response = getContextualResponse(userInput)
       const botResponse = {
-        id: (Date.now() + 1).toString(),
+        id: uuidv4(),
         text: response.text,
         isUser: false,
         timestamp: new Date(),
@@ -530,7 +536,7 @@ export default function ModernChatbot() {
   const clearChat = () => {
     setMessages([
       {
-        id: "1",
+        id: uuidv4(),
         text: "Hi! I'm UniBot, your AI assistant for university information. I can help you with admissions, courses, campus life, and more. What would you like to know?",
         isUser: false,
         timestamp: new Date(),
@@ -583,8 +589,6 @@ export default function ModernChatbot() {
 
   return (
     <div className="chatbot-theme   chatbot-container">
-      <div className="mesh-background" />
-
       <button
         className={`chat-toggle ${isOpen ? "open" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
@@ -605,7 +609,7 @@ export default function ModernChatbot() {
               <div className="status-indicator" />
             </div>
             <div className="bot-details">
-              <h3>UniBot</h3>
+              <h3>chatbot</h3>
               <span className="status">{botStatus}</span>
             </div>
           </div>
@@ -824,132 +828,6 @@ export default function ModernChatbot() {
           </div>
         </div>
       </div>
-
-      {showVoiceModal && (
-        <div className="voice-modal-backdrop" onClick={closeVoiceModal}>
-          <div className="voice-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="voice-modal-header">
-              <h3>Voice Input</h3>
-              <button className="close-voice-modal" onClick={closeVoiceModal}>
-                <X size={18} />
-              </button>
-            </div>
-
-            <div className="voice-modal-content">
-              <div className="voice-visualization">
-                {voiceTranscription.isListening ? (
-                  <div className="voice-waves">
-                    <Waveform size={32} className="wave-icon" />
-                    <div className="wave-bars">
-                      {Array.from({ length: 12 }).map((_, i) => (
-                        <div key={i} className="wave-bar" style={{ animationDelay: `${i * 0.1}s` }} />
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="voice-inactive">
-                    <Mic size={32} />
-                    <span>Click the microphone to start</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="transcription-display">
-                {voiceTranscription.transcript && (
-                  <div className="final-transcript">
-                    <p>{voiceTranscription.transcript}</p>
-                    <div
-                      className="confidence-indicator"
-                      style={{ width: `${Math.max(voiceTranscription.confidence * 100, 20)}%` }}
-                    >
-                      <span>Confidence: {Math.round(voiceTranscription.confidence * 100)}%</span>
-                    </div>
-                  </div>
-                )}
-
-                {voiceTranscription.interimTranscript && (
-                  <div className="interim-transcript">
-                    <p>{voiceTranscription.interimTranscript}</p>
-                    <div className="typing-dots">
-                      <span className="dot"></span>
-                      <span className="dot"></span>
-                      <span className="dot"></span>
-                    </div>
-                  </div>
-                )}
-
-                {!voiceTranscription.transcript && !voiceTranscription.interimTranscript && (
-                  <div className="no-transcript">
-                    <p>Speak now or click the microphone button</p>
-                  </div>
-                )}
-
-                {voiceTranscription.error && (
-                  <div className="transcription-error">
-                    <p>{voiceTranscription.error}</p>
-                  </div>
-                )}
-              </div>
-
-              <div className="voice-controls">
-                <button
-                  className={`voice-control-btn ${voiceTranscription.isListening ? "listening" : ""}`}
-                  onClick={toggleListening}
-                >
-                  {voiceTranscription.isListening ? (
-                    <>
-                      <StopCircle size={24} />
-                      <span>Stop</span>
-                    </>
-                  ) : (
-                    <>
-                      <Mic size={24} />
-                      <span>Start</span>
-                    </>
-                  )}
-                </button>
-
-                <button
-                  className="voice-control-btn send"
-                  onClick={sendTranscription}
-                  disabled={!voiceTranscription.transcript}
-                >
-                  <Send size={24} />
-                  <span>Send</span>
-                </button>
-
-                <button
-                  className="voice-control-btn discard"
-                  onClick={discardTranscription}
-                  disabled={!voiceTranscription.transcript && !voiceTranscription.interimTranscript}
-                >
-                  <Trash2 size={24} />
-                  <span>Discard</span>
-                </button>
-              </div>
-
-              {transcriptionHistory.length > 0 && (
-                <div className="transcription-history">
-                  <h4>Recent Transcriptions</h4>
-                  <ul>
-                    {transcriptionHistory.slice(-3).map((item, index) => (
-                      <li
-                        key={index}
-                        onClick={() => {
-                          setInputValue(item)
-                          closeVoiceModal()
-                        }}
-                      >
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }
