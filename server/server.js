@@ -59,16 +59,43 @@ app.post("/api/contact", async (req, res) => {
 });
 
 // Get all events
+// Modify the /api/events route to accept query params
 app.get("/api/events", async (req, res) => {
+  const limit = parseInt(req.query.limit, 10) || 8;
+  const offset = parseInt(req.query.offset, 10) || 0;
+
   try {
     const response = await pool.query(
-      "SELECT id, title, description FROM events"
+      "SELECT id, title, description FROM events ORDER BY id DESC LIMIT $1 OFFSET $2",
+      [limit, offset]
     );
-    res
-      .status(200)
-      .json({ success: true, message: "Events fetched", data: response.rows });
+    res.status(200).json({
+      success: true,
+      message: "Events fetched",
+      data: response.rows,
+    });
   } catch (error) {
     console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
+app.get("/api/events/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (isNaN(id)) return res.status(400).send("Invalid ID");
+
+  try {
+    const result = await pool.query(
+      "SELECT id, title, description FROM events WHERE id = $1",
+      [id]
+    );
+    if (result.rows.length === 0)
+      return res
+        .status(404)
+        .json({ success: false, message: "Event not found" });
+
+    res.status(200).json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    console.error(err);
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });

@@ -27,7 +27,8 @@ function App() {
             <Route path="/medical" element={<MedicalPage />} />
             <Route path="/industries" element={<IndustriesPage />} />
             <Route path="/digital" element={<DigitalPage />} />
-            <Route path="/login" element={<LoginPage />} /> {/* Add login route */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/events/:id" element={<EventDetailsPage />} />
           </Routes>
         </AnimatePresence>
         <Footer />
