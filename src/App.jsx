@@ -13,6 +13,8 @@ import Footer from "./components/Footer.jsx"
 import ChatBot from "./components/ChatBot.jsx"
 import LoginPage from "./components/LoginPage.jsx"
 import AboutPage from "./pages/AboutPage.jsx" 
+import EventDetailsPage from "./pages/EventDetailsPage.jsx";
+
 import "./App.css"
 
 function App() {
@@ -28,13 +30,9 @@ function App() {
             <Route path="/medical" element={<MedicalPage />} />
             <Route path="/industries" element={<IndustriesPage />} />
             <Route path="/digital" element={<DigitalPage />} />
-<<<<<<< HEAD
             <Route path="/login" element={<LoginPage />} />
             <Route path="/events/:id" element={<EventDetailsPage />} />
-=======
-            <Route path="/login" element={<LoginPage />} /> {/* Add login route */}
             <Route path="/about" element={<AboutPage />} /> {/* Add about route */}
->>>>>>> 6961604b0a7e5c4570518e3b90741126a4a7da4e
           </Routes>
         </AnimatePresence>
         <Footer />
