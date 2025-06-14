@@ -5,7 +5,7 @@ import { Pool } from "pg";
 import dotenv from "dotenv";
 import fs from "fs";
 import multer from "multer";
-
+import { LargeObjectManager } from "pg-large-object";
 dotenv.config();
 
 const app = express();
