@@ -87,9 +87,12 @@ const SchoolsPage = () => {
                   </div>
                 </div>
 
-                <a href={school.website} className="btn" target="_blank" rel="noopener noreferrer">
-                  Visit Website
-                </a>
+                 <Link 
+                    to="/about" 
+                    className="btn"
+                  >
+                    Explore More
+                  </Link>
               </div>
             </motion.div>
           ))}

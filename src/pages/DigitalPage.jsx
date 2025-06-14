@@ -87,9 +87,12 @@ const DigitalPage = () => {
                   </div>
                 </div>
 
-                <a href={portal.website} className="btn" target="_blank" rel="noopener noreferrer">
-                  Visit Portal
-                </a>
+                 <Link 
+                    to="/about" 
+                    className="btn"
+                  >
+                    Explore More
+                  </Link>
               </div>
             </motion.div>
           ))}

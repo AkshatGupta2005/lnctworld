@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Navbar from '../components/Navbar.jsx';
 import { ExternalLink, Award, Users, BookOpen, MapPin, Calendar, Phone, Mail } from 'lucide-react';
 import './AboutPageModern.css';
+import logo from '../assets/logo.png';
 
 // Main About Page Component
 const AboutPage = () => {
@@ -99,18 +99,13 @@ const AboutPage = () => {
 
   return (
     <div className="about-page">
-      <Navbar activeSection={activeSection} setActiveSection={setActiveSection} />
       
       {/* Hero Section */}
       <section className="hero-section">
         <div className="hero-content">
           <div className="college-info-card">
-            <div className="college-logo">
-              <img
-                src= "./assets/logo.png"
-                alt="LNCT Logo"
-                className="lnct-logo-img"
-              />
+            <div className="college-logo">          
+            <img src={logo} alt="LNCT Logo" className="lnct-logo-img" />
             </div>
             <div className="college-details">
               <h1>Lakshmi Narain College of Technology</h1>
