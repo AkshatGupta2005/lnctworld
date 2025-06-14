@@ -11,7 +11,7 @@ const SchoolsPage = () => {
   useEffect(() => {
     const fetchSchools = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/medicalinstitute");
+        const response = await fetch("https://lnctworld.onrender.com/api/schools");
         const data = await response.json();
         setSchools(data);
       } catch (error) {

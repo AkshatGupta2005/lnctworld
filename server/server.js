@@ -327,6 +327,17 @@ app.get("/api/medicalinstitute", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+app.get("/api/school", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT * FROM medicalinstitute ORDER BY id ASC"
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Database fetch error:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

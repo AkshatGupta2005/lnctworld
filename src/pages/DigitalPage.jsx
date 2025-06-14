@@ -12,7 +12,7 @@ const DigitalPage = () => {
   useEffect(() => {
     const fetchPortals = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/digitalPortals");
+        const response = await fetch("https://lnctworld.onrender.com/digitalPortals");
         const data = await response.json();
         setPortals(data);
       } catch (error) {

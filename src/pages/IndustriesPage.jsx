@@ -11,7 +11,7 @@ const IndustriesPage = () => {
   useEffect(() => {
     const fetchIndustries = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/industries");
+        const response = await fetch("https://lnctworld.onrender.com/api/industries");
         const data = await response.json();
         setIndustries(data);
       } catch (error) {
