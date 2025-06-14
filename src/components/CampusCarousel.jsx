@@ -67,7 +67,7 @@ const CampusCarousel = () => {
                 <div className="campus-slide">
                   <div className="campus-image">
                     <img
-                      src={`https://lnctworld.onrender.com/api/image/${event.id}`}
+                      src={`https://lnctworld.onrender.com/api/event/image/${event.id}`}
                       alt={event.title}
                       onError={(e) => e.currentTarget.src = "/placeholder.svg"}
                     />
