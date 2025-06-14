@@ -357,7 +357,7 @@ export default function ModernChatbot() {
 
     try {
       // Call your Express backend
-      const apiResponse = await fetch("http://localhost:5000/api/chat", {
+      const apiResponse = await fetch("https://lnctworld.onrender.com/api/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
