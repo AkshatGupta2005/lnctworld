@@ -70,9 +70,12 @@ const IndustriesPage = () => {
                   </div>
                 </div>
 
-                <a href={industry.website} className="btn" target="_blank" rel="noopener noreferrer">
-                  Visit Website
-                </a>
+                 <Link 
+                    to="/about" 
+                    className="btn"
+                  >
+                    Explore More
+                  </Link>
               </div>
             </motion.div>
           ))}

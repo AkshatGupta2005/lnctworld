@@ -111,14 +111,12 @@ const CollegesPage = () => {
                   </div>
                 </div>
 
-                <a
-                  href={college.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn"
-                >
-                  Visit Website
-                </a>
+                <Link 
+                    to="/about" 
+                    className="btn"
+                  >
+                    Explore More
+                  </Link>
               </div>
             </motion.div>
           ))}
