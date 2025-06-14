@@ -191,7 +191,7 @@ const CategoryCards = () => {
               >
                 <div className="cardImgContainer">
                   <img
-                    src={`https://lnctworld.onrender.com/api/image/${service.image}` || "/placeholder.svg"}
+                    src={`https://lnctworld.onrender.com/api/services/image/${service.id}` || "/placeholder.svg"}
                     alt={service.alt}
                     className="card-image"
                   />

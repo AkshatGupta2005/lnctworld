@@ -217,7 +217,10 @@ app.put("/api/events/:id", upload.single("image"), async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to update event" });
   }
 });
-
+const handleDatabaseError = (res, error) => {
+  console.error("Database Error:", error);
+  res.status(500).json({ success: false, message: "Internal server error" });
+};
 // Serve event image by event ID
 app.get("/api/event/image/:id", async (req, res) => {
   const id = parseInt(req.params.id, 10);
@@ -312,66 +315,231 @@ app.post("/api/chat", async (req, res) => {
 });
 app.get("/api/services", async (req, res) => {
   try {
-    const response = await pool.query("SELECT * FROM services ORDER BY id;");
+    const response = await pool.query(
+      "SELECT id, title, description, alt, link FROM services ORDER BY id;"
+    );
     res.status(200).json({
       success: true,
-      message: "Services fetched",
+      message: "Services fetched successfully",
       data: response.rows,
     });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Something went wrong" });
+    handleDatabaseError(res, error);
   }
 });
-app.get("/api/colleges", async (req, res) => {
+
+// GET a service's image
+app.get("/api/services/image/:id", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM colleges ORDER BY id ASC");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Database fetch error:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get("/api/digitalPortals", async (req, res) => {
-  try {
+    const { id } = req.params;
     const result = await pool.query(
-      "SELECT * FROM digitalPortals ORDER BY id ASC"
+      "SELECT image FROM services WHERE id = $1",
+      [id]
     );
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Database fetch error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    if (result.rows.length > 0 && result.rows[0].image) {
+      res.set("Content-Type", "image/jpeg"); // Or the correct mime-type
+      res.send(result.rows[0].image);
+    } else {
+      res.status(404).json({ success: false, message: "Image not found" });
+    }
+  } catch (error) {
+    handleDatabaseError(res, error);
   }
 });
-app.get("/api/industries", async (req, res) => {
+
+// POST a new service
+app.post("/api/services", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM industries ORDER BY id ASC");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Database fetch error:", err);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-app.get("/api/medicalinstitute", async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT * FROM medicalinstitute ORDER BY id ASC"
+    const { title, description, image, alt, link } = req.body;
+    // Basic validation
+    if (!title || !description || !link) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: title, description, link.",
+      });
+    }
+    // Decode base64 image to buffer if it exists
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+    const newService = await pool.query(
+      "INSERT INTO services (title, description, image, alt, link) VALUES ($1, $2, $3, $4, $5) RETURNING id, title, description, alt, link",
+      [title, description, imageBuffer, alt, link]
     );
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Database fetch error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(201).json({
+      success: true,
+      message: "Service created successfully",
+      data: newService.rows[0],
+    });
+  } catch (error) {
+    handleDatabaseError(res, error);
   }
 });
-app.get("/api/schools", async (req, res) => {
+
+// PUT (update) a service
+app.put("/api/services/:id", async (req, res) => {
   try {
-    const result = await pool.query("SELECT * FROM schools ORDER BY id ASC");
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Database fetch error:", err);
-    res.status(500).json({ error: "Internal server error" });
+    const { id } = req.params;
+    const { title, description, image, alt, link } = req.body;
+
+    if (!title || !description || !link) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing required fields." });
+    }
+
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+    const updatedService = await pool.query(
+      `UPDATE services 
+             SET title = $1, description = $2, alt = $3, link = $4 ${
+               image ? ", image = $6" : ""
+             }
+             WHERE id = $5 
+             RETURNING id, title, description, alt, link`,
+      image
+        ? [title, description, alt, link, id, imageBuffer]
+        : [title, description, alt, link, id]
+    );
+
+    if (updatedService.rows.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Service updated successfully",
+      data: updatedService.rows[0],
+    });
+  } catch (error) {
+    handleDatabaseError(res, error);
   }
 });
+
+// DELETE a service
+app.delete("/api/services/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deleteOp = await pool.query(
+      "DELETE FROM services WHERE id = $1 RETURNING *",
+      [id]
+    );
+    if (deleteOp.rowCount === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
+    }
+    res
+      .status(200)
+      .json({ success: true, message: "Service deleted successfully" });
+  } catch (error) {
+    handleDatabaseError(res, error);
+  }
+});
+
+const createInstitutionCRUDRoutes = (app, tableName) => {
+  // GET all institutions (without image)
+  app.get(`/api/${tableName}`, async (req, res) => {
+    try {
+      const result = await pool.query(
+        `SELECT id, name, description, alt, courses, established, website FROM ${tableName} ORDER BY id ASC`
+      );
+      res.status(200).json({ success: true, data: result.rows });
+    } catch (err) {
+      handleDatabaseError(res, err);
+    }
+  });
+
+  // POST new institution
+  app.post(`/api/${tableName}`, async (req, res) => {
+    try {
+      const { name, description, image, alt, courses, established, website } =
+        req.body;
+      if (!name)
+        return res
+          .status(400)
+          .json({ success: false, message: "Name is required" });
+      const imageBuffer = image ? Buffer.from(image, "base64") : null;
+      const newInst = await pool.query(
+        `INSERT INTO ${tableName} (name, description, image, alt, courses, established, website) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, description, alt, courses, established, website`,
+        [name, description, imageBuffer, alt, courses, established, website]
+      );
+      res.status(201).json({ success: true, data: newInst.rows[0] });
+    } catch (err) {
+      handleDatabaseError(res, err);
+    }
+  });
+
+  // PUT (update) institution
+  app.put(`/api/${tableName}/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { name, description, image, alt, courses, established, website } =
+        req.body;
+      if (!name)
+        return res
+          .status(400)
+          .json({ success: false, message: "Name is required" });
+      const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+      const updatedInst = await pool.query(
+        `UPDATE ${tableName} 
+               SET name = $1, description = $2, alt = $3, courses = $4, established = $5, website = $6 ${
+                 image ? ", image = $8" : ""
+               }
+               WHERE id = $7 
+               RETURNING id, name, description, alt, courses, established, website`,
+        image
+          ? [
+              name,
+              description,
+              alt,
+              courses,
+              established,
+              website,
+              id,
+              imageBuffer,
+            ]
+          : [name, description, alt, courses, established, website, id]
+      );
+      if (updatedInst.rowCount === 0)
+        return res
+          .status(404)
+          .json({ success: false, message: "Institution not found" });
+      res.status(200).json({ success: true, data: updatedInst.rows[0] });
+    } catch (err) {
+      handleDatabaseError(res, err);
+    }
+  });
+
+  // DELETE institution
+  app.delete(`/api/${tableName}/:id`, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const deleteOp = await pool.query(
+        `DELETE FROM ${tableName} WHERE id = $1 RETURNING *`,
+        [id]
+      );
+      if (deleteOp.rowCount === 0) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Institution not found" });
+      }
+      res
+        .status(200)
+        .json({ success: true, message: "Institution deleted successfully" });
+    } catch (err) {
+      handleDatabaseError(res, err);
+    }
+  });
+};
+// Create routes for each institution type
+createInstitutionCRUDRoutes(app, "colleges");
+createInstitutionCRUDRoutes(app, "schools");
+createInstitutionCRUDRoutes(app, "digitalPortals");
+createInstitutionCRUDRoutes(app, "industries");
+createInstitutionCRUDRoutes(app, "medicalinstitute");
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
