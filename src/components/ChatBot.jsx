@@ -16,11 +16,9 @@ import {
   Volume2,
   VolumeX,
   Lightbulb,
-  AudioWaveformIcon as Waveform,
-  StopCircle,
 } from "lucide-react"
 import { v4 as uuidv4 } from "uuid"
-import "./ChatBot.css"
+import "./ChatBot.css" // Make sure you have this CSS file with your styles
 
 export default function ModernChatbot() {
   const [isOpen, setIsOpen] = useState(false)
@@ -121,133 +119,10 @@ export default function ModernChatbot() {
     },
   ]
 
-  // Contextual responses with suggestions
-  const getContextualResponse = (userMessage) => {
-    const message = userMessage.toLowerCase()
+  // NOTE: The hardcoded `getContextualResponse` function has been removed.
+  // The bot's logic is now handled by the backend server via an API call.
 
-    if (message.includes("admission") || message.includes("apply") || message.includes("requirements")) {
-      return {
-        text: "Great question about admissions! Our university has a holistic admissions process. Here's what you need to know:\n\n• **GPA Requirement**: Minimum 3.0 GPA\n• **Standardized Tests**: SAT/ACT scores (optional for 2024)\n• **Application Deadline**: January 15th for Fall admission\n• **Required Documents**: Transcripts, essays, letters of recommendation\n\nWould you like me to elaborate on any of these requirements?",
-        suggestions: [
-          "What's the average GPA of admitted students?",
-          "Tell me about the essay requirements",
-          "How important are extracurricular activities?",
-          "Can I apply for spring admission?",
-        ],
-      }
-    }
-
-    if (
-      message.includes("course") ||
-      message.includes("program") ||
-      message.includes("major") ||
-      message.includes("study")
-    ) {
-      return {
-        text: "We offer a wide range of academic programs! Here are our most popular areas:\n\n🎓 **Undergraduate Programs**:\n• Business Administration\n• Computer Science\n• Engineering\n• Liberal Arts\n• Health Sciences\n\n🎓 **Graduate Programs**:\n• MBA\n• Master's in Data Science\n• Master's in Education\n• Various PhD programs\n\nEach program has unique requirements and opportunities. What field interests you most?",
-        suggestions: [
-          "Tell me about the Computer Science program",
-          "What business majors do you offer?",
-          "Are there any new programs starting?",
-          "How do I change my major?",
-        ],
-      }
-    }
-
-    if (message.includes("tour") || message.includes("visit") || message.includes("campus")) {
-      return {
-        text: "I'd love to help you plan a campus visit! We offer several tour options:\n\n🏫 **Campus Tours Available**:\n• **Daily Walking Tours**: 10 AM & 2 PM (Mon-Fri)\n• **Virtual Tours**: Available 24/7 online\n• **Specialized Tours**: Academic departments, residence halls\n• **Overnight Visits**: For prospective students\n\nTours typically last 90 minutes and include academic buildings, residence halls, dining facilities, and recreational areas. Would you like to schedule one?",
-        suggestions: [
-          "How do I schedule a campus tour?",
-          "Can I visit specific departments?",
-          "What should I bring to the tour?",
-          "Are weekend tours available?",
-        ],
-      }
-    }
-
-    if (
-      message.includes("financial") ||
-      message.includes("aid") ||
-      message.includes("scholarship") ||
-      message.includes("cost") ||
-      message.includes("tuition")
-    ) {
-      return {
-        text: "Financial aid is available to help make education affordable! Here's what we offer:\n\n💰 **Financial Aid Options**:\n• **Need-based Aid**: Grants and work-study programs\n• **Merit Scholarships**: Academic and talent-based awards\n• **Federal Aid**: Pell Grants, student loans\n• **Payment Plans**: Flexible tuition payment options\n\n**2024-25 Tuition**: $45,000/year (before aid)\n**Average Aid Package**: $28,000\n\nMost students receive some form of financial assistance. Have you completed the FAFSA?",
-        suggestions: [
-          "How do I apply for scholarships?",
-          "What's the FAFSA deadline?",
-          "Are there work-study opportunities?",
-          "Can international students get aid?",
-        ],
-      }
-    }
-
-    if (
-      message.includes("housing") ||
-      message.includes("dorm") ||
-      message.includes("residence") ||
-      message.includes("living")
-    ) {
-      return {
-        text: "Our campus housing offers a great college experience! Here are your options:\n\n🏠 **Housing Options**:\n• **Traditional Dorms**: Shared rooms, community bathrooms\n• **Suite-Style**: 2-4 bedrooms sharing a bathroom\n• **Apartments**: Full kitchens, more independence\n• **Themed Communities**: Academic or interest-based living\n\n**Housing Guarantee**: All first-year students guaranteed on-campus housing\n**Application Deadline**: May 1st for fall semester\n\nEach option includes meal plans, WiFi, and access to study spaces. What type of living situation interests you?",
-        suggestions: [
-          "What meal plans are available?",
-          "Can I choose my roommate?",
-          "Are pets allowed in dorms?",
-          "How much does housing cost?",
-        ],
-      }
-    }
-
-    if (
-      message.includes("activity") ||
-      message.includes("club") ||
-      message.includes("sport") ||
-      message.includes("extracurricular")
-    ) {
-      return {
-        text: "Campus life here is vibrant with tons of opportunities to get involved!\n\n🎯 **Student Activities**:\n• **200+ Student Organizations**: Academic, cultural, recreational\n• **Greek Life**: 15 fraternities and sororities\n• **Division II Athletics**: 18 varsity sports teams\n• **Intramural Sports**: Basketball, soccer, volleyball, and more\n• **Student Government**: Leadership opportunities\n• **Community Service**: Local and international programs\n\nGetting involved is one of the best ways to make friends and develop leadership skills. What are your interests?",
-        suggestions: [
-          "How do I join a club?",
-          "What sports teams do you have?",
-          "Are there music or theater groups?",
-          "Can I start a new organization?",
-        ],
-      }
-    }
-
-    if (
-      message.includes("calendar") ||
-      message.includes("schedule") ||
-      message.includes("semester") ||
-      message.includes("break")
-    ) {
-      return {
-        text: "Here's our academic calendar for the 2024-25 year:\n\n📅 **Important Dates**:\n• **Fall Semester**: August 26 - December 13\n• **Spring Semester**: January 21 - May 9\n• **Summer Sessions**: May 19 - August 8\n\n**Breaks & Holidays**:\n• Fall Break: October 14-15\n• Thanksgiving: November 25-29\n• Winter Break: December 14 - January 20\n• Spring Break: March 10-14\n\n**Registration**: Opens 6 weeks before each semester. Need help with course planning?",
-        suggestions: [
-          "When does registration open?",
-          "How many credits should I take?",
-          "Can I take summer classes?",
-          "What's the add/drop deadline?",
-        ],
-      }
-    }
-
-    // Default response for general questions
-    return {
-      text: "Thanks for your question! I'm here to help with any university-related information. I can provide details about:\n\n• **Admissions & Applications**\n• **Academic Programs & Courses**\n• **Campus Life & Activities**\n• **Financial Aid & Scholarships**\n• **Housing & Dining**\n• **Campus Tours & Visits**\n\nWhat specific area would you like to explore?",
-      suggestions: [
-        "Tell me about admission requirements",
-        "What programs do you offer?",
-        "How can I visit the campus?",
-        "What financial aid is available?",
-      ],
-    }
-  }
-
-  // Initialize speech recognition
+  // Initialize speech recognition and synthesis
   useEffect(() => {
     if (typeof window !== "undefined") {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
@@ -264,11 +139,7 @@ export default function ModernChatbot() {
           setIsListening(true)
           setVoiceError(null)
           setIsProcessingVoice(false)
-          setVoiceTranscription((prev) => ({
-            ...prev,
-            isListening: true,
-            error: null,
-          }))
+          setVoiceTranscription((prev) => ({ ...prev, isListening: true, error: null }))
         }
 
         recognition.onresult = (event) => {
@@ -289,23 +160,14 @@ export default function ModernChatbot() {
 
           if (interimTranscript) {
             setInputValue(interimTranscript)
-            setVoiceTranscription((prev) => ({
-              ...prev,
-              interimTranscript,
-            }))
+            setVoiceTranscription((prev) => ({ ...prev, interimTranscript }))
           }
 
           if (finalTranscript) {
             setIsProcessingVoice(true)
             const command = finalTranscript.toLowerCase().trim()
             setLastVoiceCommand(command)
-            setVoiceTranscription((prev) => ({
-              ...prev,
-              transcript: finalTranscript,
-              confidence,
-              interimTranscript: "",
-            }))
-
+            setVoiceTranscription((prev) => ({ ...prev, transcript: finalTranscript, confidence, interimTranscript: "" }))
             setTranscriptionHistory((prev) => [...prev, finalTranscript])
 
             const matchedCommand = voiceCommands.find((vc) => command.includes(vc.command.toLowerCase()))
@@ -320,7 +182,6 @@ export default function ModernChatbot() {
             } else {
               setInputValue(finalTranscript.trim())
               setIsProcessingVoice(false)
-
               if (showVoiceModal) {
                 setTimeout(() => {
                   handleSendMessage(finalTranscript.trim())
@@ -335,20 +196,13 @@ export default function ModernChatbot() {
           setVoiceError(`Voice recognition error: ${event.error}`)
           setIsListening(false)
           setIsProcessingVoice(false)
-          setVoiceTranscription((prev) => ({
-            ...prev,
-            isListening: false,
-            error: `Error: ${event.error}`,
-          }))
+          setVoiceTranscription((prev) => ({ ...prev, isListening: false, error: `Error: ${event.error}` }))
         }
 
         recognition.onend = () => {
           setIsListening(false)
           setIsProcessingVoice(false)
-          setVoiceTranscription((prev) => ({
-            ...prev,
-            isListening: false,
-          }))
+          setVoiceTranscription((prev) => ({ ...prev, isListening: false }))
         }
 
         recognitionRef.current = recognition
@@ -381,7 +235,6 @@ export default function ModernChatbot() {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (!isOpen) return
-
       if (e.key === "?" && !e.ctrlKey && !e.shiftKey && !e.altKey) {
         setShowShortcuts((prev) => !prev)
       }
@@ -390,20 +243,19 @@ export default function ModernChatbot() {
         setShowShortcuts(false)
         stopListening()
       }
-      if (e.key === "b" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+      if (e.key === "b" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault()
         clearChat()
       }
-      if (e.key === "m" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+      if (e.key === "m" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault()
         setIsMaximized((prev) => !prev)
       }
-      if (e.key === "v" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey) {
+      if (e.key === "v" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault()
         toggleListening()
       }
     }
-
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
     // eslint-disable-next-line
@@ -435,7 +287,6 @@ export default function ModernChatbot() {
       isListening: false,
       error: null,
     })
-
     setTimeout(() => {
       startListening()
     }, 300)
@@ -444,10 +295,7 @@ export default function ModernChatbot() {
   const closeVoiceModal = () => {
     stopListening()
     setShowVoiceModal(false)
-    setVoiceTranscription((prev) => ({
-      ...prev,
-      isActive: false,
-    }))
+    setVoiceTranscription((prev) => ({ ...prev, isActive: false }))
   }
 
   const toggleListening = () => {
@@ -470,7 +318,6 @@ export default function ModernChatbot() {
       utterance.rate = 0.9
       utterance.pitch = 1
       utterance.volume = 0.8
-
       synthRef.current.speak(utterance)
     }
   }
@@ -485,22 +332,21 @@ export default function ModernChatbot() {
   const handleSendMessage = async (manualMessage) => {
     let messageToSend = manualMessage !== undefined ? manualMessage : inputValue
 
-    // If called from a button click, manualMessage could be an event object
     if (typeof messageToSend !== "string") {
       messageToSend = inputValue
     }
 
-    if (!messageToSend || typeof messageToSend.trim !== "function" || !messageToSend.trim()) return
+    if (!messageToSend || !messageToSend.trim()) return
 
+    const userInput = messageToSend.trim()
     const newMessage = {
       id: uuidv4(),
-      text: messageToSend,
+      text: userInput,
       isUser: true,
       timestamp: new Date(),
     }
 
     setMessages((prev) => [...prev, newMessage])
-    const userInput = messageToSend
     setInputValue("")
     setIsTyping(true)
     setBotStatus("Thinking...")
@@ -509,8 +355,22 @@ export default function ModernChatbot() {
       stopListening()
     }
 
-    setTimeout(() => {
-      const response = getContextualResponse(userInput)
+    try {
+      // Call your Express backend
+      const apiResponse = await fetch("http://localhost:5000/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message: userInput }),
+      })
+
+      if (!apiResponse.ok) {
+        throw new Error(`HTTP error! status: ${apiResponse.status}`)
+      }
+
+      const response = await apiResponse.json()
+
       const botResponse = {
         id: uuidv4(),
         text: response.text,
@@ -518,14 +378,26 @@ export default function ModernChatbot() {
         timestamp: new Date(),
         suggestions: response.suggestions,
       }
+
       setMessages((prev) => [...prev, botResponse])
-      setIsTyping(false)
-      setBotStatus("Online")
 
       if (isSpeechEnabled) {
         speakText(response.text)
       }
-    }, 2000)
+    } catch (error) {
+      console.error("Failed to fetch from chatbot API:", error)
+      const errorResponse = {
+        id: uuidv4(),
+        text: "I'm sorry, but I'm having trouble connecting to my brain right now. Please try again in a moment.",
+        isUser: false,
+        timestamp: new Date(),
+        suggestions: [],
+      }
+      setMessages((prev) => [...prev, errorResponse])
+    } finally {
+      setIsTyping(false)
+      setBotStatus("Online")
+    }
   }
 
   const handleSuggestionClick = (suggestion) => {
@@ -537,7 +409,7 @@ export default function ModernChatbot() {
     setMessages([
       {
         id: uuidv4(),
-        text: "Hi! I'm UniBot, your AI assistant for university information. I can help you with admissions, courses, campus life, and more. What would you like to know?",
+        text: "Hi! I'm UniBot, your AI assistant. How can I help you today?",
         isUser: false,
         timestamp: new Date(),
         suggestions: [
@@ -564,31 +436,9 @@ export default function ModernChatbot() {
     setShowShortcuts((prev) => !prev)
   }
 
-  const acceptTranscription = () => {
-    if (voiceTranscription.transcript) {
-      setInputValue(voiceTranscription.transcript)
-      closeVoiceModal()
-    }
-  }
-
-  const discardTranscription = () => {
-    setVoiceTranscription((prev) => ({
-      ...prev,
-      transcript: "",
-      interimTranscript: "",
-    }))
-    closeVoiceModal()
-  }
-
-  const sendTranscription = () => {
-    if (voiceTranscription.transcript) {
-      handleSendMessage(voiceTranscription.transcript)
-      closeVoiceModal()
-    }
-  }
-
+  // --- JSX Rendering ---
   return (
-    <div className="chatbot-theme   chatbot-container">
+    <div className="chatbot-theme chatbot-container">
       <button
         className={`chat-toggle ${isOpen ? "open" : ""}`}
         onClick={() => setIsOpen(!isOpen)}
@@ -609,7 +459,7 @@ export default function ModernChatbot() {
               <div className="status-indicator" />
             </div>
             <div className="bot-details">
-              <h3>chatbot</h3>
+              <h3>UniBot</h3>
               <span className="status">{botStatus}</span>
             </div>
           </div>
@@ -628,7 +478,7 @@ export default function ModernChatbot() {
             <button
               className="control-btn"
               onClick={toggleShortcuts}
-              title="Keyboard shortcuts"
+              title="Keyboard shortcuts (?)"
               aria-label="Show keyboard shortcuts"
             >
               <Keyboard size={16} />
@@ -659,40 +509,7 @@ export default function ModernChatbot() {
             </button>
           </div>
         </div>
-
-        {(isListening || isProcessingVoice || lastVoiceCommand) && (
-          <div className="voice-status">
-            {isListening && !isProcessingVoice && (
-              <div className="voice-indicator listening">
-                <div className="pulse-dot" />
-                <span>Listening... Say a command or speak your message</span>
-              </div>
-            )}
-            {isProcessingVoice && (
-              <div className="voice-indicator processing">
-                <div className="processing-dots">
-                  <div className="dot" />
-                  <div className="dot" />
-                  <div className="dot" />
-                </div>
-                <span>Processing voice command...</span>
-              </div>
-            )}
-            {lastVoiceCommand && !isProcessingVoice && (
-              <div className="voice-indicator command">
-                <span>Command recognized: "{lastVoiceCommand}"</span>
-              </div>
-            )}
-          </div>
-        )}
-
-        {voiceError && (
-          <div className="voice-error">
-            <span>{voiceError}</span>
-            <button onClick={() => setVoiceError(null)}>×</button>
-          </div>
-        )}
-
+        
         {showShortcuts && (
           <div className="shortcuts-panel">
             <div className="shortcuts-header">
@@ -744,6 +561,10 @@ export default function ModernChatbot() {
               >
                 <div className="message-avatar">{message.isUser ? <User size={16} /> : <Bot size={16} />}</div>
                 <div className="message-bubble">
+                  {/* Using dangerouslySetInnerHTML to render markdown from Gemini if needed.
+                      For simple text, <p>{message.text}</p> is safer.
+                      For a more robust solution, use a library like 'react-markdown'.
+                  */}
                   <p>{message.text}</p>
                   <span className="message-time">
                     {message.timestamp.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -751,7 +572,7 @@ export default function ModernChatbot() {
                 </div>
               </div>
 
-              {message.suggestions && message.suggestions.length > 0 && (
+              {!isTyping && messages.length -1 === index && message.suggestions && message.suggestions.length > 0 && (
                 <div className="suggestions-container">
                   <div className="suggestions-header">
                     <Lightbulb size={14} />
@@ -762,7 +583,7 @@ export default function ModernChatbot() {
                       <button
                         key={suggestionIndex}
                         className="suggestion-btn"
-                        onClick={() => handleSuggestionClick(suggestion)}
+                        onClick={() => handleSendMessage(suggestion)} // Updated to call handleSendMessage directly
                         style={{ animationDelay: `${suggestionIndex * 0.1}s` }}
                       >
                         {suggestion}
@@ -803,12 +624,13 @@ export default function ModernChatbot() {
               placeholder="Ask me anything about the university..."
               className="message-input"
               aria-label="Message input"
+              disabled={isTyping}
             />
             {isVoiceSupported && (
               <button
                 className={`voice-btn ${isListening ? "listening" : ""} ${isProcessingVoice ? "processing" : ""}`}
                 onClick={toggleListening}
-                disabled={isProcessingVoice}
+                disabled={isProcessingVoice || isTyping}
                 title={isListening ? "Stop listening (Ctrl+V)" : "Start voice input (Ctrl+V)"}
                 aria-label={isListening ? "Stop voice recognition" : "Start voice recognition"}
               >
@@ -818,8 +640,8 @@ export default function ModernChatbot() {
             )}
             <button
               className="send-btn"
-              onClick={handleSendMessage}
-              disabled={!inputValue.trim()}
+              onClick={() => handleSendMessage()}
+              disabled={!inputValue.trim() || isTyping}
               title="Send message (Enter)"
               aria-label="Send message"
             >

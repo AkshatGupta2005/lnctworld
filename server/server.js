@@ -6,6 +6,7 @@ import dotenv from "dotenv";
 import fs from "fs";
 import multer from "multer";
 import { LargeObjectManager } from "pg-large-object";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 dotenv.config();
 
 const app = express();
@@ -13,6 +14,12 @@ const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
 app.use(express.json());
+
+if (!process.env.GOOGLE_API_KEY) {
+  console.error("ERROR: GOOGLE_API_KEY is not defined in your .env file.");
+  process.exit(1);
+}
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_API_KEY);
 
 const pool = new Pool({
   user: process.env.PG_USER,
@@ -207,6 +214,77 @@ app.get("/api/services", async (req, res) => {
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
+
+app.post("/api/chat", async (req, res) => {
+  try {
+    const { message } = req.body;
+
+    if (!message) {
+      return res.status(400).json({ error: "Message is required" });
+    }
+
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // 5. Create the Prompt for Gemini (no changes here)
+    const prompt = `
+        You are UniBot, a friendly, knowledgeable, and helpful AI assistant for a university. Your goal is to provide concise and accurate information about the university.
+
+        Your responses MUST BE in a specific JSON format. The JSON object should have two properties:
+        1. "text": A string containing your detailed answer. Use markdown for formatting, like lists with '*' or bolding with '**'.
+        2. "suggestions": An array of 4 strings, where each string is a relevant and insightful follow-up question the user might ask.
+
+        Here is the user's question: "${message}"
+
+        Provide information related to admissions, courses, campus life, financial aid, housing, etc. Be creative but stay within the persona of a university assistant. If you cannot answer a question, politely say so. DO NOT include any text or markdown formatting outside of the main JSON object.
+    `;
+
+    // 6. Call the Gemini API (no changes here)
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const responseText = response.text();
+
+    // 7. Parse the Gemini response with the new extraction method
+    let parsedResponse;
+    try {
+      // --- THIS IS THE NEW, MORE ROBUST PARSING LOGIC ---
+
+      // Find the first occurrence of '{'
+      const startIndex = responseText.indexOf("{");
+      // Find the last occurrence of '}'
+      const endIndex = responseText.lastIndexOf("}");
+
+      if (startIndex > -1 && endIndex > -1 && endIndex > startIndex) {
+        // Extract the JSON string from between the first '{' and last '}'
+        const jsonString = responseText.substring(startIndex, endIndex + 1);
+        parsedResponse = JSON.parse(jsonString);
+      } else {
+        // If we can't find a valid JSON structure, throw an error
+        throw new Error(
+          "Could not find a valid JSON object in the AI response."
+        );
+      }
+    } catch (e) {
+      console.error("Error parsing Gemini's JSON response:", e);
+      console.error("Raw response from Gemini:", responseText); // Log the problematic response
+      // Provide a fallback error response if JSON parsing fails
+      return res.status(500).json({
+        text: "I'm sorry, I encountered an issue processing your request. Please try asking in a different way.",
+        suggestions: [
+          "What are the admission requirements?",
+          "Tell me about the campus.",
+          "What courses are available?",
+        ],
+      });
+    }
+
+    res.json(parsedResponse);
+  } catch (error) {
+    console.error("Error in /api/chat:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while communicating with the AI." });
   }
 });
 
