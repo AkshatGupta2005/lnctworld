@@ -4,40 +4,24 @@ import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import "./InfoPage.css"
 
-const digitalPortals = [
-  {
-    id: 1,
-    name: "LNCT Learning Management System",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Learning Management System is a comprehensive digital platform for online learning, course management, and student-teacher interaction.",
-    features: ["Online Courses", "Virtual Classrooms", "Assessment Tools", "Learning Analytics"],
-    established: 2015,
-    website: "https://lnctlms.ac.in",
-  },
-  {
-    id: 2,
-    name: "LNCT Research Portal",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Research Portal provides access to research papers, journals, and collaboration tools for researchers and students.",
-    features: ["Research Repository", "Collaboration Tools", "Journal Access", "Research Analytics"],
-    established: 2017,
-    website: "https://lnctresearch.ac.in",
-  },
-  {
-    id: 3,
-    name: "LNCT Student Portal",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Student Portal is a one-stop platform for students to access academic information, results, attendance, and other services.",
-    features: ["Academic Records", "Fee Payment", "Attendance Tracking", "Exam Results"],
-    established: 2016,
-    website: "https://lnctstudent.ac.in",
-  },
-]
+import { useEffect, useState } from "react"
 
 const DigitalPage = () => {
+  const [digitalPortals, setPortals] = useState([]);
+
+  useEffect(() => {
+    const fetchPortals = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/digitalPortals");
+        const data = await response.json();
+        setPortals(data);
+      } catch (error) {
+        console.error("Error fetching Portals:", error);
+      }
+    };
+
+    fetchPortals();
+  }, []);
   return (
     <motion.div
       className="info-page"

@@ -5,40 +5,24 @@ import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import "./InfoPage.css"
 
-const colleges = [
-  {
-    id: 1,
-    name: "LNCT University, Bhopal",
-    image: "/assets/lnctu.jpg", // replace with real image path
-    description:
-      "LNCT University, Bhopal is a premier institution offering a wide range of undergraduate and postgraduate courses in engineering, management, pharmacy, and more.",
-    courses: ["B.Tech", "M.Tech", "MBA", "BBA", "B.Pharm", "M.Pharm"],
-    established: 1994,
-    website: "https://lnctu.ac.in/",
-  },
-  {
-    id: 2,
-    name: "LNCT College, Indore",
-    image: "/assets/lnct-indore.jpg", // replace with real image path
-    description:
-      "LNCT College, Indore provides quality education in various disciplines with state-of-the-art infrastructure and experienced faculty.",
-    courses: ["B.Tech", "MBA", "BCA", "MCA"],
-    established: 2005,
-    website: "https://lnct.ac.in/indore",
-  },
-  {
-    id: 3,
-    name: "LNCT College, Jabalpur",
-    image: "/assets/lnct-jabalpur.jpg", // replace with real image path
-    description:
-      "LNCT College, Jabalpur is known for its academic excellence and industry-oriented curriculum, preparing students for successful careers.",
-    courses: ["B.Tech", "Polytechnic", "B.Ed"],
-    established: 2010,
-    website: "https://lnct.ac.in/jabalpur",
-  },
-]
+import { useEffect, useState } from "react"
 
 const CollegesPage = () => {
+  const [colleges, setColleges] = useState([]);
+
+  useEffect(() => {
+    const fetchColleges = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/colleges");
+        const data = await response.json();
+        setColleges(data);
+      } catch (error) {
+        console.error("Error fetching colleges:", error);
+      }
+    };
+
+    fetchColleges();
+  }, []);
   return (
     <motion.div
       className="info-page"
