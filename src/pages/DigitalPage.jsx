@@ -29,14 +29,26 @@ const DigitalPage = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
+      style={{ paddingTop: 0 }}
     >
+      <div 
+        className="hero-section"
+        style={{
+          background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://th.bing.com/th/id/OIP.gTfLN96HSo8T11aHszgsRwHaD-?rs=1&pid=ImgDetMain') no-repeat center center / cover`,
+            minHeight: '70vh', // Adjust height as needed
+            width: '100%',
+            position: 'relative',
+            marginTop: '-80px', // Pull up to cover navbar (adjust based on your navbar height)
+            paddingTop: '80px'
+        }}
+      >
       <div className="info-header">
         <div className="container">
           <h1>Digital & Academic Portals</h1>
           <p>Access our digital platforms and academic portals for enhanced learning</p>
         </div>
       </div>
-
+</div>
       <div className="container">
         <div className="info-content">
           {digitalPortals.map((portal, index) => (

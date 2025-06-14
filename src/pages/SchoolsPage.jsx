@@ -28,13 +28,24 @@ const SchoolsPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
+      <div 
+        className="hero-section"
+        style={{
+          background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://www.lnctworldschools.com/wp-content/uploads/2023/10/lnctworldschoolbuilding-768x512.jpg') no-repeat center center / cover`,
+            minHeight: '70vh', // Adjust height as needed
+            width: '100%',
+            position: 'relative',
+            marginTop: '-80px', // Pull up to cover navbar (adjust based on your navbar height)
+            paddingTop: '80px'
+        }}
+      >
       <div className="info-header">
         <div className="container">
           <h1>Schools</h1>
           <p>Discover our schools providing quality education from kindergarten to high school</p>
         </div>
       </div>
-
+        </div>
       <div className="container">
         <div className="info-content">
           {schools.map((school, index) => (
@@ -44,6 +55,7 @@ const SchoolsPage = () => {
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
+              style={{ paddingTop: 0 }}
             >
               <div className="info-card-image">
                 <img src={school.image || "/placeholder.svg"} alt={school.name} />

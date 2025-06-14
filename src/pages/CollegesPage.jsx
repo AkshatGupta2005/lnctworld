@@ -30,6 +30,7 @@ const CollegesPage = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
+       style={{ paddingTop: 0 }}
     >
       <Helmet>
         <title>Colleges under LNCT Group | Bhopal, Indore, Jabalpur</title>
@@ -62,8 +63,18 @@ const CollegesPage = () => {
         />
         <meta name="twitter:image" content="https://akshatgupta.space/assets/logo.png" />
       </Helmet>
-
-      <div className="info-header">
+     <div 
+        className="hero-section"
+        style={{
+          background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://lnct.ac.in/wp-content/uploads/2021/05/LNCT-A-scaled.jpg') no-repeat center center / cover`,
+            minHeight: '70vh', // Adjust height as needed
+            width: '100%',
+            position: 'relative',
+            marginTop: '-80px', // Pull up to cover navbar (adjust based on your navbar height)
+            paddingTop: '80px'
+        }}
+      >
+      <div className="info-header" style={{ paddingTop: '100px' }}>
         <div className="container">
           <h1>Colleges & Universities</h1>
           <p>
@@ -72,6 +83,7 @@ const CollegesPage = () => {
           </p>
         </div>
       </div>
+    </div>
 
       <div className="container">
         <div className="info-content">
