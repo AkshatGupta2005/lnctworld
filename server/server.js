@@ -99,7 +99,43 @@ app.get("/api/events/:id", async (req, res) => {
     res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
+app.get("/api/image/:oid", async (req, res) => {
+  const oid = parseInt(req.params.oid, 10);
+  if (isNaN(oid)) {
+    return res.status(400).send("Invalid OID");
+  }
 
+  const client = await pool.connect();
+
+  try {
+    await client.query("BEGIN");
+
+    const lom = new LargeObjectManager({ pg: client });
+    const [size, stream] = await lom.openAndReadableStreamAsync(oid, 16384); // buffer size: 16KB
+
+    res.setHeader("Content-Type", "image/jpeg");
+    res.setHeader("Content-Length", size);
+
+    stream.on("error", async (err) => {
+      console.error("Stream error:", err);
+      await client.query("ROLLBACK");
+      client.release();
+      res.status(500).send("Error reading image stream");
+    });
+
+    stream.pipe(res);
+
+    stream.on("end", async () => {
+      await client.query("COMMIT");
+      client.release();
+    });
+  } catch (err) {
+    console.error("Unexpected error:", err);
+    await client.query("ROLLBACK");
+    client.release();
+    res.status(500).send("Unexpected server error");
+  }
+});
 // Add new event with image upload (stored as bytea)
 app.post("/api/events", upload.single("image"), async (req, res) => {
   const { title, description } = req.body;
