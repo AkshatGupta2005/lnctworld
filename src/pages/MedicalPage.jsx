@@ -4,40 +4,22 @@ import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import "./InfoPage.css"
 
-const medicalInstitutions = [
-  {
-    id: 1,
-    name: "LNCT Medical College, Bhopal",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Medical College in Bhopal offers MBBS and other medical courses with state-of-the-art facilities and experienced faculty.",
-    courses: ["MBBS", "MD", "MS", "Nursing"],
-    established: 2010,
-    website: "https://lnctmedical.ac.in",
-  },
-  {
-    id: 2,
-    name: "LNCT Ayurvedic College, Bhopal",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Ayurvedic College provides education in traditional Ayurvedic medicine with modern research facilities.",
-    courses: ["BAMS", "MD Ayurveda", "Panchakarma Specialist"],
-    established: 2012,
-    website: "https://lnctayurveda.ac.in",
-  },
-  {
-    id: 3,
-    name: "LNCT Homeopathic Medical College",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Homeopathic Medical College offers courses in homeopathic medicine with a focus on practical training and research.",
-    courses: ["BHMS", "MD Homeopathy"],
-    established: 2015,
-    website: "https://lncthomeopathy.ac.in",
-  },
-]
-
+import { useEffect, useState } from "react"
 const MedicalPage = () => {
+  const [medicalInstitutions, setMedicalInstitutions] = useState([]);
+
+  useEffect(() => {
+    const fetchMedicalInstitutions = async () => {
+      try {
+        const response = await fetch("https://lnctworld.onrender.com/api/medicalinstitute");
+        const data = await response.json();
+        setMedicalInstitutions(data);
+      } catch (error) {
+        console.error("Error fetching medicalInstitutions:", error);
+      }
+    };
+    fetchMedicalInstitutions();
+  }, []);
   return (
     <motion.div
       className="info-page"

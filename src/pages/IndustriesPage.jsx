@@ -4,40 +4,23 @@ import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import "./InfoPage.css"
 
-const industries = [
-  {
-    id: 1,
-    name: "LNCT Technologies",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Technologies is a software development company specializing in web and mobile application development, AI solutions, and IT consulting.",
-    sectors: ["Software Development", "AI & ML", "IT Consulting", "Cloud Services"],
-    established: 2008,
-    website: "https://lncttechnologies.com",
-  },
-  {
-    id: 2,
-    name: "LNCT Manufacturing",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Manufacturing is involved in the production of various industrial components with a focus on quality and innovation.",
-    sectors: ["Automotive Parts", "Industrial Equipment", "Electronics", "Precision Engineering"],
-    established: 2010,
-    website: "https://lnctmanufacturing.com",
-  },
-  {
-    id: 3,
-    name: "LNCT Renewable Energy",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Renewable Energy focuses on sustainable energy solutions including solar, wind, and hydroelectric power generation.",
-    sectors: ["Solar Energy", "Wind Power", "Hydroelectric", "Energy Storage"],
-    established: 2015,
-    website: "https://lnctenergy.com",
-  },
-]
+import { useEffect, useState } from "react"
 
 const IndustriesPage = () => {
+  const [industries, setIndustries] = useState([]);
+  useEffect(() => {
+    const fetchIndustries = async () => {
+      try {
+        const response = await fetch("https://lnctworld.onrender.com/api/industries");
+        const data = await response.json();
+        setIndustries(data);
+      } catch (error) {
+        console.error("Error fetching industries:", error);
+      }
+    };
+
+    fetchIndustries();
+  }, []);
   return (
     <motion.div
       className="info-page"

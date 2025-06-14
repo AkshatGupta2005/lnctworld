@@ -4,40 +4,22 @@ import { motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import "./InfoPage.css"
 
-const schools = [
-  {
-    id: 1,
-    name: "LNCT World School, Bhopal",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT World School in Bhopal provides quality education from kindergarten to high school with a focus on holistic development.",
-    features: ["Smart Classrooms", "Sports Facilities", "Science Labs", "Arts & Music"],
-    established: 2005,
-    website: "https://lnctworldschool.ac.in",
-  },
-  {
-    id: 2,
-    name: "LNCT Public School, Indore",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT Public School in Indore offers a comprehensive curriculum with a blend of academics, sports, and extracurricular activities.",
-    features: ["Digital Learning", "Swimming Pool", "Robotics Lab", "Performing Arts"],
-    established: 2010,
-    website: "https://lnctpublicschool.ac.in",
-  },
-  {
-    id: 3,
-    name: "LNCT International School, Bhopal",
-    image: "/placeholder.svg?height=300&width=500",
-    description:
-      "LNCT International School provides international standard education with a global perspective and modern teaching methodologies.",
-    features: ["International Curriculum", "Language Labs", "Cultural Exchange", "Advanced Technology"],
-    established: 2015,
-    website: "https://lnctinternational.ac.in",
-  },
-]
-
+import { useEffect, useState } from "react"
 const SchoolsPage = () => {
+  const [schools, setSchools] = useState([]);
+
+  useEffect(() => {
+    const fetchSchools = async () => {
+      try {
+        const response = await fetch("https://lnctworld.onrender.com/api/schools");
+        const data = await response.json();
+        setSchools(data);
+      } catch (error) {
+        console.error("Error fetching Schools:", error);
+      }
+    };
+    fetchSchools();
+  }, []);
   return (
     <motion.div
       className="info-page"
