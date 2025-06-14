@@ -28,14 +28,26 @@ const IndustriesPage = () => {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
+      style={{ paddingTop: 0 }}
     >
+      <div 
+        className="hero-section"
+        style={{
+          background: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://openthemagazine.com/wp-content/uploads/2022/07/LNCT.jpg') no-repeat center center / cover`,
+            minHeight: '70vh', // Adjust height as needed
+            width: '100%',
+            position: 'relative',
+            marginTop: '-80px', // Pull up to cover navbar (adjust based on your navbar height)
+            paddingTop: '80px'
+        }}
+      >
       <div className="info-header">
         <div className="container">
           <h1>Industries & Companies</h1>
           <p>Explore our industrial ventures and companies across various sectors</p>
         </div>
       </div>
-
+        </div>
       <div className="container">
         <div className="info-content">
           {industries.map((industry, index) => (
