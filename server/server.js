@@ -179,6 +179,44 @@ app.post("/api/events", upload.single("image"), async (req, res) => {
     });
   }
 });
+app.delete("/api/events/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.query("DELETE FROM events WHERE id = $1", [id]);
+    res.json({ success: true, message: "Event deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting event:", err);
+    res.status(500).json({ success: false, message: "Failed to delete event" });
+  }
+});
+app.put("/api/events/:id", upload.single("image"), async (req, res) => {
+  const { title, description } = req.body;
+  const { id } = req.params;
+  const file = req.file;
+
+  try {
+    let updateQuery, params;
+
+    if (file) {
+      const imageBuffer = fs.readFileSync(file.path);
+      updateQuery =
+        "UPDATE events SET title = $1, description = $2, image = $3 WHERE id = $4";
+      params = [title, description, imageBuffer, id];
+      fs.unlinkSync(file.path);
+    } else {
+      updateQuery =
+        "UPDATE events SET title = $1, description = $2 WHERE id = $3";
+      params = [title, description, id];
+    }
+
+    await pool.query(updateQuery, params);
+
+    res.json({ success: true, message: "Event updated successfully" });
+  } catch (err) {
+    console.error("Error updating event:", err);
+    res.status(500).json({ success: false, message: "Failed to update event" });
+  }
+});
 
 // Serve event image by event ID
 app.get("/api/event/image/:id", async (req, res) => {
@@ -199,21 +237,6 @@ app.get("/api/event/image/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
-  }
-});
-
-// Get all services (example from your code)
-app.get("/api/services", async (req, res) => {
-  try {
-    const response = await pool.query("SELECT * FROM services");
-    res.status(200).json({
-      success: true,
-      message: "Services fetched",
-      data: response.rows,
-    });
-  } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ success: false, message: "Something went wrong" });
   }
 });
 
@@ -287,6 +310,19 @@ app.post("/api/chat", async (req, res) => {
       .json({ error: "An error occurred while communicating with the AI." });
   }
 });
+app.get("/api/services", async (req, res) => {
+  try {
+    const response = await pool.query("SELECT * FROM services ORDER BY id;");
+    res.status(200).json({
+      success: true,
+      message: "Services fetched",
+      data: response.rows,
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ success: false, message: "Something went wrong" });
+  }
+});
 app.get("/api/colleges", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM colleges ORDER BY id ASC");
@@ -327,11 +363,9 @@ app.get("/api/medicalinstitute", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-app.get("/api/school", async (req, res) => {
+app.get("/api/schools", async (req, res) => {
   try {
-    const result = await pool.query(
-      "SELECT * FROM medicalinstitute ORDER BY id ASC"
-    );
+    const result = await pool.query("SELECT * FROM schools ORDER BY id ASC");
     res.json(result.rows);
   } catch (err) {
     console.error("Database fetch error:", err);
