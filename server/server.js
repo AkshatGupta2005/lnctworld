@@ -437,12 +437,201 @@ app.delete("/api/services/:id", async (req, res) => {
   }
 });
 
-const createInstitutionCRUDRoutes = (app, tableName) => {
-  // GET all institutions (without image)
-  app.get(`/api/${tableName}`, async (req, res) => {
+app.get("/api/colleges", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, description, alt, courses, established, website FROM colleges ORDER BY id ASC"
+    );
+    res.status(200).json({ success: true, data: result.rows });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+app.post("/api/colleges", async (req, res) => {
+  try {
+    const { name, description, image, alt, courses, established, website } =
+      req.body;
+    if (!name)
+      return res
+        .status(400)
+        .json({ success: false, message: "Name is required" });
+
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+    const result = await pool.query(
+      "INSERT INTO colleges (name, description, image, alt, courses, established, website) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, description, alt, courses, established, website",
+      [name, description, imageBuffer, alt, courses, established, website]
+    );
+    res.status(201).json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+app.put("/api/colleges/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, image, alt, courses, established, website } =
+      req.body;
+    if (!name)
+      return res
+        .status(400)
+        .json({ success: false, message: "Name is required" });
+
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+    const result = await pool.query(
+      `UPDATE colleges SET name = $1, description = $2, alt = $3, courses = $4, established = $5, website = $6 ${
+        image ? ", image = $8" : ""
+      }
+       WHERE id = $7 RETURNING id, name, description, alt, courses, established, website`,
+      image
+        ? [
+            name,
+            description,
+            alt,
+            courses,
+            established,
+            website,
+            id,
+            imageBuffer,
+          ]
+        : [name, description, alt, courses, established, website, id]
+    );
+    if (result.rowCount === 0)
+      return res
+        .status(404)
+        .json({ success: false, message: "College not found" });
+
+    res.status(200).json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+app.delete("/api/colleges/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      "DELETE FROM colleges WHERE id = $1 RETURNING *",
+      [id]
+    );
+    if (result.rowCount === 0)
+      return res
+        .status(404)
+        .json({ success: false, message: "College not found" });
+
+    res
+      .status(200)
+      .json({ success: true, message: "College deleted successfully" });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+// ----- Schools CRUD -----
+app.get("/api/schools", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id, name, description, alt, courses, established, website FROM schools ORDER BY id ASC"
+    );
+    res.status(200).json({ success: true, data: result.rows });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+app.post("/api/schools", async (req, res) => {
+  try {
+    const { name, description, image, alt, courses, established, website } =
+      req.body;
+    if (!name)
+      return res
+        .status(400)
+        .json({ success: false, message: "Name is required" });
+
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+    const result = await pool.query(
+      "INSERT INTO schools (name, description, image, alt, courses, established, website) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, description, alt, courses, established, website",
+      [name, description, imageBuffer, alt, courses, established, website]
+    );
+    res.status(201).json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+app.put("/api/schools/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, description, image, alt, courses, established, website } =
+      req.body;
+    if (!name)
+      return res
+        .status(400)
+        .json({ success: false, message: "Name is required" });
+
+    const imageBuffer = image ? Buffer.from(image, "base64") : null;
+
+    const result = await pool.query(
+      `UPDATE schools SET name = $1, description = $2, alt = $3, courses = $4, established = $5, website = $6 ${
+        image ? ", image = $8" : ""
+      }
+       WHERE id = $7 RETURNING id, name, description, alt, courses, established, website`,
+      image
+        ? [
+            name,
+            description,
+            alt,
+            courses,
+            established,
+            website,
+            id,
+            imageBuffer,
+          ]
+        : [name, description, alt, courses, established, website, id]
+    );
+    if (result.rowCount === 0)
+      return res
+        .status(404)
+        .json({ success: false, message: "School not found" });
+
+    res.status(200).json({ success: true, data: result.rows[0] });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+app.delete("/api/schools/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await pool.query(
+      "DELETE FROM schools WHERE id = $1 RETURNING *",
+      [id]
+    );
+    if (result.rowCount === 0)
+      return res
+        .status(404)
+        .json({ success: false, message: "School not found" });
+
+    res
+      .status(200)
+      .json({ success: true, message: "School deleted successfully" });
+  } catch (err) {
+    handleDatabaseError(res, err);
+  }
+});
+
+// ----- Repeat the same pattern for other tables -----
+const tables = ["digitalportals", "industries", "medicalinstitute"];
+
+tables.forEach((table) => {
+  app.get(`/api/${table}`, async (req, res) => {
     try {
       const result = await pool.query(
-        `SELECT id, name, description, alt, courses, established, website FROM ${tableName} ORDER BY id ASC`
+        `SELECT id, name, description, alt, courses, established, website FROM ${table} ORDER BY id ASC`
       );
       res.status(200).json({ success: true, data: result.rows });
     } catch (err) {
@@ -450,8 +639,7 @@ const createInstitutionCRUDRoutes = (app, tableName) => {
     }
   });
 
-  // POST new institution
-  app.post(`/api/${tableName}`, async (req, res) => {
+  app.post(`/api/${table}`, async (req, res) => {
     try {
       const { name, description, image, alt, courses, established, website } =
         req.body;
@@ -459,19 +647,22 @@ const createInstitutionCRUDRoutes = (app, tableName) => {
         return res
           .status(400)
           .json({ success: false, message: "Name is required" });
+
       const imageBuffer = image ? Buffer.from(image, "base64") : null;
-      const newInst = await pool.query(
-        `INSERT INTO ${tableName} (name, description, image, alt, courses, established, website) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, name, description, alt, courses, established, website`,
+
+      const result = await pool.query(
+        `INSERT INTO ${table} (name, description, image, alt, courses, established, website)
+         VALUES ($1, $2, $3, $4, $5, $6, $7)
+         RETURNING id, name, description, alt, courses, established, website`,
         [name, description, imageBuffer, alt, courses, established, website]
       );
-      res.status(201).json({ success: true, data: newInst.rows[0] });
+      res.status(201).json({ success: true, data: result.rows[0] });
     } catch (err) {
       handleDatabaseError(res, err);
     }
   });
 
-  // PUT (update) institution
-  app.put(`/api/${tableName}/:id`, async (req, res) => {
+  app.put(`/api/${table}/:id`, async (req, res) => {
     try {
       const { id } = req.params;
       const { name, description, image, alt, courses, established, website } =
@@ -480,15 +671,14 @@ const createInstitutionCRUDRoutes = (app, tableName) => {
         return res
           .status(400)
           .json({ success: false, message: "Name is required" });
+
       const imageBuffer = image ? Buffer.from(image, "base64") : null;
 
-      const updatedInst = await pool.query(
-        `UPDATE ${tableName} 
-               SET name = $1, description = $2, alt = $3, courses = $4, established = $5, website = $6 ${
-                 image ? ", image = $8" : ""
-               }
-               WHERE id = $7 
-               RETURNING id, name, description, alt, courses, established, website`,
+      const result = await pool.query(
+        `UPDATE ${table} SET name = $1, description = $2, alt = $3, courses = $4, established = $5, website = $6 ${
+          image ? ", image = $8" : ""
+        }
+         WHERE id = $7 RETURNING id, name, description, alt, courses, established, website`,
         image
           ? [
               name,
@@ -502,44 +692,31 @@ const createInstitutionCRUDRoutes = (app, tableName) => {
             ]
           : [name, description, alt, courses, established, website, id]
       );
-      if (updatedInst.rowCount === 0)
-        return res
-          .status(404)
-          .json({ success: false, message: "Institution not found" });
-      res.status(200).json({ success: true, data: updatedInst.rows[0] });
+      if (result.rowCount === 0)
+        return res.status(404).json({ success: false, message: "Not found" });
+
+      res.status(200).json({ success: true, data: result.rows[0] });
     } catch (err) {
       handleDatabaseError(res, err);
     }
   });
 
-  // DELETE institution
-  app.delete(`/api/${tableName}/:id`, async (req, res) => {
+  app.delete(`/api/${table}/:id`, async (req, res) => {
     try {
       const { id } = req.params;
-      const deleteOp = await pool.query(
-        `DELETE FROM ${tableName} WHERE id = $1 RETURNING *`,
+      const result = await pool.query(
+        `DELETE FROM ${table} WHERE id = $1 RETURNING *`,
         [id]
       );
-      if (deleteOp.rowCount === 0) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Institution not found" });
-      }
-      res
-        .status(200)
-        .json({ success: true, message: "Institution deleted successfully" });
+      if (result.rowCount === 0)
+        return res.status(404).json({ success: false, message: "Not found" });
+
+      res.status(200).json({ success: true, message: "Deleted successfully" });
     } catch (err) {
       handleDatabaseError(res, err);
     }
   });
-};
-// Create routes for each institution type
-createInstitutionCRUDRoutes(app, "colleges");
-createInstitutionCRUDRoutes(app, "schools");
-createInstitutionCRUDRoutes(app, "digitalPortals");
-createInstitutionCRUDRoutes(app, "industries");
-createInstitutionCRUDRoutes(app, "medicalinstitute");
-
+});
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

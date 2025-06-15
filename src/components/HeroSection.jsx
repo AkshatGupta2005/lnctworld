@@ -91,6 +91,7 @@ const HeroSection = () => {
     const controls = new OrbitControls(camera, renderer.domElement)
     controls.enableZoom = false
     controls.enablePan = false
+    controls.enableRotate = false
     controls.autoRotate = true
     controls.autoRotateSpeed = 0.3
 
@@ -207,6 +208,8 @@ const HeroSection = () => {
           </svg>
         </motion.div>
       </motion.div>
+      <img src="src/assets/32YRS-03-min-150x150.png" alt="Top Left Decoration" className="corner-img top-left" />
+      <img src="src/assets/1-web.png" alt="Top Right Decoration" className="corner-img top-right" />
     </div>
   )
 }
