@@ -7,6 +7,7 @@ import fs from "fs";
 import multer from "multer";
 import { LargeObjectManager } from "pg-large-object";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import bodyParser from "body-parser";
 dotenv.config();
 
 const app = express();
@@ -15,7 +16,8 @@ const upload = multer({ dest: "uploads/" });
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
-
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 if (!process.env.GOOGLE_API_KEY) {
   console.error("ERROR: GOOGLE_API_KEY is not defined in your .env file.");
   process.exit(1);
