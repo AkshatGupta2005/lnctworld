@@ -14,6 +14,7 @@ const upload = multer({ dest: "uploads/" });
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
 if (!process.env.GOOGLE_API_KEY) {
   console.error("ERROR: GOOGLE_API_KEY is not defined in your .env file.");
